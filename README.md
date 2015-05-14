@@ -34,7 +34,6 @@
     （result/report/目录下将生成对应的分析结果）
     
 ## 样例 ##
-**index.html**
 <html>
     <head><title>WebLogPaser Report Index</title></head>
     <body>
@@ -45,7 +44,6 @@
     </body>
 </html>
 
-**access_log_domain_20150506.html**
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <head>
@@ -53,7 +51,7 @@
 </head>
 <body>
     <h1 align="center">WebLogPaser</h1>
-    <table class="details" border="0" cellpadding="5" cellspacing="2" align="center" width="80%">
+    <table class="details" border="0" align="center" width="80%">
         <caption align="left">Overall Analyzed Requests</caption>
         <tr valign="top">
             <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>日志文件</strong></td>
@@ -77,7 +75,7 @@
             <td style="background:#BFBFBF;font-weight:bold;color:green;"><strong>8</strong></td>
         </tr>
     </table>
-    <table class="details" border="0" cellpadding="5" cellspacing="2"  align="center" width="80%%">
+    <table class="details" border="0" align="center" width="80%%">
         <caption align="left">Top requests(URLS)</caption>
         <tr valign="top">
             <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>Requests</strong></td>
@@ -170,7 +168,5 @@
     </table>
 </body>
 </html>
-    
 
-**access_log_domain_20150506_GoAccess.html**
-请参考http://goaccess.io/goaccess_html_report.html?src=gh
+GoAccess请参考http://goaccess.io/goaccess_html_report.html?src=gh
