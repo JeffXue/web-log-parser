@@ -57,7 +57,7 @@
             <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>日志文件</strong></td>
             <td style="background:#BFBFBF;font-weight:bold;color:green;" colspan="3"><strong>access_log_domain_20150506</strong></td>
             <td style="background:#BFBFBF;font-weight:bold;color:green;">
-                <a href="access_log_domain_20150506_GoAccess.html" target="_goaccess">查看GoAccess生成报告</a>
+                <a href="#" target="_goaccess">查看GoAccess生成报告</a>
             </td>
         </tr>
         <tr valign="top">
