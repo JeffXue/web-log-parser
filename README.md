@@ -2,7 +2,6 @@
 **WebLogParser**为开源的分析web日志工具，采用python语言开发，具有灵活的日志格式配置。
 
 ## 数据说明 ##
-本工具主要获取以下类型数据：
 **Overall Analyzed Requests：**
 - 日志文件
 - GoAccess分析结果（独立调用，可屏蔽）
