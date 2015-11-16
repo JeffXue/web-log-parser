@@ -65,7 +65,7 @@ def generate_web_log_parser_report(data):
     for url_data in url_data_list:
         url_data_dict = {'url': url_data.url.split()[1], 'pv': url_data.pv, 'ratio': url_data.ratio,
                          'response_peak': url_data.peak,
-                         'protocol': url_data.url.split()[0], 'method': url_data.url.split()[2]}
+                         'protocol': url_data.url.split()[0].replace('"', ''), 'method': url_data.url.split()[2].replace('"', '')}
         url_data_html = """
         <tr valign='top'>
             <td style='background:#BFBFBF;font-weight:bold;color:green;'><strong>%(url)s</strong></td>
