@@ -57,8 +57,8 @@ def generate_web_log_parser_report(data):
             <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>访问量</strong></td>
             <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>比例</strong></td>
             <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>每秒最大处理消息数量</strong></td>
-            <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>Protocol</strong></td>
             <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>Method</strong></td>
+            <td style="BACKGROUND: #a6caf0" align="center" vertical-align="middle" class="cell"><strong>Protocol</strong></td>
         </tr>
         """
     main_html_body += url_data_html_header
