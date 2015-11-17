@@ -6,7 +6,9 @@ from collections import Counter
 
 from util import get_dir_files
 from config import config
-from report import generate_web_log_parser_report, update_index_html
+from report import generate_web_log_parser_report
+from report import generate_web_log_parser_urls
+from report import update_index_html
 
 
 class URLData():
@@ -47,7 +49,7 @@ def get_new_url(origin_url):
     if len(origin_url.split('?')) == 1:
         return origin_url
     url_front = origin_url.split('?')[0]
-    url_parameters = origin_url.split('?')[1].split('&')
+    url_parameters = sorted(origin_url.split('?')[1].split('&'))
     new_url_parameters = []
     for parameter in url_parameters:
         key = parameter.split('=')[0]
@@ -118,11 +120,18 @@ def parse_log_file(target_file, log_format):
                   'source_file': target_file}
     generate_web_log_parser_report(total_data)
 
+    total_data = {'source_file': target_file, 'urls': urls_counter}
+    generate_web_log_parser_urls(total_data)
+
 
 def parse_log_file_with_goaccess(target_file):
     source_file = '../data/' + target_file
     goaccess_file = '../result/report/' + target_file + '_GoAccess.html'
-    command = """ goaccess -f %(file)s  -a -q --time-format=%(time_format)s --date-format=%(date_format)s --log-format='%(log_format)s' --no-progress > %(goaccess_file)s""" \
+    command = """ goaccess -f %(file)s  -a -q \
+            --time-format=%(time_format)s \
+            --date-format=%(date_format)s \
+            --log-format='%(log_format)s' \
+            --no-progress > %(goaccess_file)s""" \
               % {'file': source_file, 'time_format': config.time_format, 'date_format': config.date_format,
                  'log_format': config.log_format, 'goaccess_file': goaccess_file}
     os.system(command)
