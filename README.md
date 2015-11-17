@@ -26,6 +26,8 @@
 - date-format 日志中的日期格式，用于GoAccess
 - log-format 日志内容格式，用于本工具和GoAccess
 - static-file 静态文件后缀，本工具在统计URL时将过滤静态文件
+- is_with_parameters 统计URL是否使用URL中参数一起进行分析，设置为1：使用参数， 0：不使用；默认将转换URL中参数，如?key=123统计时记录为key={key}
+- special_parameter_keys 配置特殊的参数key值，以逗号分隔，参数中的key=123，不会被置换为key={key}
 3. 运行
     python start.py
 4. 查看结果

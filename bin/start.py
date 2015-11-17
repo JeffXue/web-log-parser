@@ -43,6 +43,24 @@ def not_static_file(url):
         return False
 
 
+def get_new_url(origin_url):
+    if len(origin_url.split('?')) == 1:
+        return origin_url
+    url_front = origin_url.split('?')[0]
+    url_parameters = origin_url.split('?')[1].split('&')
+    new_url_parameters = []
+    for parameter in url_parameters:
+        key = parameter.split('=')[0]
+        if len(parameter.split('=')) == 1:
+            new_url_parameters.append(parameter)
+        elif key in config.special_parameter_keys:
+            new_url_parameters.append(parameter)
+        else:
+            new_url_parameters.append(key + '=' + '{' + key + '}')
+    new_url = url_front + '?' + '&'.join(new_url_parameters)
+    return new_url
+
+
 def parse_log_file(target_file, log_format):
     hosts = []
     times = []
@@ -52,7 +70,10 @@ def parse_log_file(target_file, log_format):
             line = line.split()
             hosts.append(line[log_format.get('host_index')])
             times.append(line[log_format.get('time_index')])
-            url = line[log_format.get('url_index')].split('?')[0]
+            if config.is_with_parameters:
+                url = get_new_url(line[log_format.get('url_index')])
+            else:
+                url = line[log_format.get('url_index')].split('?')[0]
             if not_static_file(url):
                 method = line[log_format.get('method_index')]
                 protocol = line[log_format.get('protocol_index')]
@@ -79,7 +100,10 @@ def parse_log_file(target_file, log_format):
         for line in f:
             line_list = line.split()
             method = line_list[log_format.get('method_index')]
-            url = line_list[log_format.get('url_index')].split('?')[0]
+            if config.is_with_parameters:
+                url = get_new_url(line_list[log_format.get('url_index')])
+            else:
+                url = line_list[log_format.get('url_index')].split('?')[0]
             protocol = line_list[log_format.get('protocol_index')]
             for url_data in url_data_list:
                 if url_data.url == method+' '+url+' '+protocol:
