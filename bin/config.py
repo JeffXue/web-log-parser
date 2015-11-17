@@ -18,5 +18,6 @@ class Config():
         self.static_file = all_config.get('Common', 'static-file').split(',')
         self.is_with_parameters = int(all_config.get('Common', 'is_with_parameters'))
         self.special_parameter_keys = all_config.get('Common', 'special_parameter_keys').split(',')
+        self.urls_most_number = int(all_config.get('Common', 'urls_most_number'))
 
 config = Config('../conf/Config.ini')

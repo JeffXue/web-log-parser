@@ -97,7 +97,7 @@ def update_index_html():
     <h1>WebLogPaser Report Index</h1>
     <ul>
     """
-    for report_file in get_dir_files('../result/report/'):
+    for report_file in sorted(get_dir_files('../result/report/')):
         if report_file.find('GoAccess') != -1:
             pass
         else:

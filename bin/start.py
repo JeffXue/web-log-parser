@@ -57,7 +57,7 @@ def get_new_url(origin_url):
             new_url_parameters.append(parameter)
         else:
             new_url_parameters.append(key + '=' + '{' + key + '}')
-    new_url = url_front + '?' + '&'.join(new_url_parameters)
+    new_url = url_front + '?' + '&amp;'.join(new_url_parameters)
     return new_url
 
 
@@ -89,7 +89,7 @@ def parse_log_file(target_file, log_format):
     response_peak_time = response_most_common[0].replace('[', '')
 
     urls_counter = Counter(urls)
-    urls_most_common = urls_counter.most_common(10)
+    urls_most_common = urls_counter.most_common(config.urls_most_number)
 
     url_data_list = []
     for item in urls_most_common:
@@ -133,7 +133,7 @@ def main():
     log_format = parse_log_format()
 
     result_files = [result_file.replace('.html', '') for result_file in get_dir_files('../result/report/')]
-    target_files = [data_file for data_file in get_dir_files('../data') if data_file not in result_files]
+    target_files = sorted([data_file for data_file in get_dir_files('../data') if data_file not in result_files])
 
     for target_file in target_files:
         print datetime.datetime.now(), ' Start parse file : '+target_file
