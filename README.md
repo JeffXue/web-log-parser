@@ -49,18 +49,6 @@
 
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<style type="text/css">
-th{
-    background: #a6caf0;
-    align:center;
-    vertical-align:middle;
-}
-td{
-    background:#bfbfbf;
-    font-weight:bold;
-    color:green;
-}
-</style>
 <head>
 <title>AutoTestReport</title>
 </head>

@@ -39,7 +39,8 @@ def parse_log_format():
 
 
 def not_static_file(url):
-    if url.split('.')[-1] not in config.static_file:
+    url_front = url.split('?')[0]
+    if url_front.split('.')[-1] not in config.static_file:
         return True
     else:
         return False
