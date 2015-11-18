@@ -55,7 +55,9 @@ def get_new_url(origin_url):
         key = parameter.split('=')[0]
         if len(parameter.split('=')) == 1:
             new_url_parameters.append(parameter)
-        elif key in config.special_parameter_keys:
+        elif key in config.custom_keys:
+            new_url_parameters.append(key + '=' + config.custom_parameters.get(key))
+        elif key in config.fixed_parameter_keys:
             new_url_parameters.append(parameter)
         else:
             new_url_parameters.append(key + '=' + '{' + key + '}')

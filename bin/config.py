@@ -17,7 +17,19 @@ class Config():
         self.log_format = all_config.get('Common', 'log-format')
         self.static_file = all_config.get('Common', 'static-file').split(',')
         self.is_with_parameters = int(all_config.get('Common', 'is_with_parameters'))
-        self.special_parameter_keys = all_config.get('Common', 'special_parameter_keys').split(',')
+        self.fixed_parameter_keys = all_config.get('Common', 'fixed_parameter_keys').split(',')
+        self.custom_parameters_list = all_config.get('Common', 'custom_parameters').split(',')
         self.urls_most_number = int(all_config.get('Common', 'urls_most_number'))
+
+        self.custom_keys = []
+        self.custom_parameters = {}
+        for item in self.custom_parameters_list:
+            key = item.split('=')[0]
+            if len(item.split('=')) == 2:
+                value = item.split('=')[1]
+            else:
+                value = ''
+            self.custom_parameters.setdefault(key, value)
+            self.custom_keys.append(key)
 
 config = Config('../conf/Config.ini')
