@@ -60,7 +60,7 @@
             <th><strong>日志文件</strong></th>
             <td colspan="3"><strong>access_log_domain_20150506</strong></td>
             <td>
-                <a href="#" target="_goaccess">查看GoAccess生成报告</a>
+                <a href="http://goaccess.io/goaccess_html_report.html?src=gh" target="_goaccess">查看GoAccess生成报告</a>
             </td>
         </tr>
         <tr>
@@ -172,4 +172,4 @@
 </body>
 </html>
 
-GoAccess请参考http://goaccess.io/goaccess_html_report.html?src=gh
+GoAccess结果可直接点击上面例子中的链接
