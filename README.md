@@ -67,7 +67,7 @@
             <th><strong>总PV</strong></th>
             <th><strong>总UV</strong></th>
             <th><strong>每秒最大处理消息数量</strong></th>
-            <th><strong>最大处理消息时间</strong></th>
+            <th><strong>最大处理<br/>消息时间</strong></th>
             <th><strong>每秒平均处理消息</strong></th>
         </tr>
         <tr>
@@ -84,9 +84,9 @@
             <th><strong>Requests</strong></th>
             <th><strong>访问量</strong></th>
             <th><strong>比例</strong></th>
-            <th><strong>每秒最大处理消息数量</strong></th>
-            <th><strong>Protocol</strong></th>
+            <th><strong>每秒最大处<br/>理消息数量</strong></th>
             <th><strong>Method</strong></th>
+            <th><strong>Protocol</strong></th>
         </tr>
         <tr>
             <td><strong>/uc_server/avatar.php</strong></td>
