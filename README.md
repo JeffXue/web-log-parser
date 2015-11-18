@@ -66,9 +66,9 @@
         <tr>
             <th><strong>总PV</strong></th>
             <th><strong>总UV</strong></th>
-            <th><strong>每秒最大处理消息数量</strong></th>
+            <th><strong>每秒最大处<br/>理消息数量</strong></th>
             <th><strong>最大处理<br/>消息时间</strong></th>
-            <th><strong>每秒平均处理消息</strong></th>
+            <th><strong>每秒平均<br/>处理消息</strong></th>
         </tr>
         <tr>
             <td><strong>561066</strong></td>
@@ -93,80 +93,80 @@
             <td><strong>194084</strong></td>
             <td><strong>34.592%</strong></td>
             <td><strong>75</strong></td>
-            <td><strong>"GET</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>GET</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/forum.php</strong></td>
             <td><strong>95833</strong></td>
             <td><strong>17.081%</strong></td>
             <td><strong>96</strong></td>
-            <td><strong>"GET</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>GET</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/topic.php</strong></td>
             <td><strong>75987</strong></td>
             <td><strong>13.543%</strong></td>
             <td><strong>27</strong></td>
-            <td><strong>"GET</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>GET</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/misc.php</strong></td>
             <td><strong>73379</strong></td>
             <td><strong>13.078%</strong></td>
             <td><strong>26</strong></td>
-            <td><strong>"POST</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>POST</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/home.php</strong></td>
             <td><strong>19729</strong></td>
             <td><strong>3.516%</strong></td>
             <td><strong>10</strong></td>
-            <td><strong>"GET</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>GET</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/</strong></td>
             <td><strong>8280</strong></td>
             <td><strong>1.476%</strong></td>
             <td><strong>7</strong></td>
-            <td><strong>"GET</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>GET</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/setusername.php</strong></td>
             <td><strong>8129</strong></td>
             <td><strong>1.449%</strong></td>
             <td><strong>10</strong></td>
-            <td><strong>"POST</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>POST</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/setusername.php</strong></td>
             <td><strong>7698</strong></td>
             <td><strong>1.372%</strong></td>
             <td><strong>7</strong></td>
-            <td><strong>"GET</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>GET</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/forum-37-1.html</strong></td>
             <td><strong>6782</strong></td>
             <td><strong>1.209%</strong></td>
             <td><strong>2</strong></td>
-            <td><strong>"GET</strong></td>
-            <td><strong>HTTP/1.1"</strong></td>
+            <td><strong>GET</strong></td>
+            <td><strong>HTTP/1.1</strong></td>
         </tr>
         <tr>
             <td><strong>/api/getdata.php</strong></td>
             <td><strong>3045</strong></td>
             <td><strong>0.543%</strong></td>
             <td><strong>6</strong></td>
-            <td><strong>"GET</strong></td>
-            <td><strong>HTTP/1.0"</strong></td>
+            <td><strong>GET</strong></td>
+            <td><strong>HTTP/1.0</strong></td>
         </tr>
     </table>
 </body>
