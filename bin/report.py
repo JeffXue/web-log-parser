@@ -33,8 +33,36 @@ def generate_web_log_parser_report(data):
                          'protocol': url_data.url.split()[2].replace('"', ''),
                          'method': url_data.url.split()[0].replace('"', '')}
         html_body += report_top_request_html_table_body % url_data_dict
+    
+    pvs = data.get('hours_hits')   
+    hours_pv = {'h0': pvs.get('00'),
+            'h1': pvs.get('01'),
+            'h2': pvs.get('02'),
+            'h3': pvs.get('03'),
+            'h4': pvs.get('04'),
+            'h5': pvs.get('05'),
+            'h6': pvs.get('06'),
+            'h7': pvs.get('07'),
+            'h8': pvs.get('08'),
+            'h9': pvs.get('09'),
+            'h10': pvs.get('10'),
+            'h11': pvs.get('11'),
+            'h12': pvs.get('12'),
+            'h13': pvs.get('13'),
+            'h14': pvs.get('14'),
+            'h15': pvs.get('15'),
+            'h16': pvs.get('16'),
+            'h17': pvs.get('17'),
+            'h18': pvs.get('18'),
+            'h19': pvs.get('19'),
+            'h20': pvs.get('20'),
+            'h21': pvs.get('21'),
+            'h22': pvs.get('22'),
+            'h23': pvs.get('23'),
+            'date': data.get('date')
+            }
 
-    html = report_html_header + html_body + report_html_end
+    html = report_html_header + html_body + report_html_end % hours_pv
     html_file = '../result/report/'+data.get('source_file')+'.html'
     with open(html_file, 'w') as f:
         f.write(html)

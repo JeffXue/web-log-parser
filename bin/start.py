@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 __author__ = 'xuekj'
+import time
 import datetime
 import os
 from collections import Counter
@@ -69,12 +70,14 @@ def get_new_url(origin_url):
 def parse_log_file(target_file, log_format):
     hosts = []
     times = []
+    hours = []
     urls = []
     with open('../data/'+target_file, 'r') as f:
         for line in f:
             line = line.split()
             hosts.append(line[log_format.get('host_index')])
             times.append(line[log_format.get('time_index')])
+            hours.append(line[log_format.get('time_index')].split(':')[1])
             if config.is_with_parameters:
                 url = get_new_url(line[log_format.get('url_index')])
             else:
@@ -92,6 +95,11 @@ def parse_log_file(target_file, log_format):
     response_most_common = times_counter.most_common(1)[0]
     response_peak = response_most_common[1]
     response_peak_time = response_most_common[0].replace('[', '')
+
+    temp_date = time.strptime(response_peak_time,'%d/%b/%Y:%H:%M:%S')
+    date =time.strftime('%Y-%m-%d', temp_date)
+
+    hours_counter = Counter(hours)
 
     urls_counter = Counter(urls)
     urls_most_common = urls_counter.most_common(config.urls_most_number)
@@ -120,7 +128,7 @@ def parse_log_file(target_file, log_format):
 
     total_data = {'pv': pv, 'uv': uv, 'response_avg': response_avg, 'response_peak': response_peak,
                   'response_peak_time': response_peak_time, 'url_data_list': url_data_list,
-                  'source_file': target_file}
+                  'source_file': target_file, 'hours_hits': hours_counter, 'date': date}
     generate_web_log_parser_report(total_data)
 
     total_data = {'source_file': target_file, 'urls': urls_counter}
@@ -133,10 +141,10 @@ def parse_log_file_with_goaccess(target_file):
     command = """ goaccess -f %(file)s  -a -q \
             --time-format=%(time_format)s \
             --date-format=%(date_format)s \
-            --log-format='%(log_format)s' \
+            --log-format='%(goaccess_log_format)s' \
             --no-progress > %(goaccess_file)s""" \
               % {'file': source_file, 'time_format': config.time_format, 'date_format': config.date_format,
-                 'log_format': config.log_format, 'goaccess_file': goaccess_file}
+                 'goaccess_log_format': config.goaccess_log_format, 'goaccess_file': goaccess_file}
     os.system(command)
 
 
