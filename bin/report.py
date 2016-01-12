@@ -34,34 +34,33 @@ def generate_web_log_parser_report(data):
                          'method': url_data.url.split()[0].replace('"', '')}
         html_body += report_top_request_html_table_body % url_data_dict
     
-    pvs = data.get('hours_hits')   
-    hours_pv = {'h0': pvs.get('00'),
-            'h1': pvs.get('01'),
-            'h2': pvs.get('02'),
-            'h3': pvs.get('03'),
-            'h4': pvs.get('04'),
-            'h5': pvs.get('05'),
-            'h6': pvs.get('06'),
-            'h7': pvs.get('07'),
-            'h8': pvs.get('08'),
-            'h9': pvs.get('09'),
-            'h10': pvs.get('10'),
-            'h11': pvs.get('11'),
-            'h12': pvs.get('12'),
-            'h13': pvs.get('13'),
-            'h14': pvs.get('14'),
-            'h15': pvs.get('15'),
-            'h16': pvs.get('16'),
-            'h17': pvs.get('17'),
-            'h18': pvs.get('18'),
-            'h19': pvs.get('19'),
-            'h20': pvs.get('20'),
-            'h21': pvs.get('21'),
-            'h22': pvs.get('22'),
-            'h23': pvs.get('23'),
+    pvs = data.get('hours_hits')
+    hours_pv = {'h0': pvs['00'],
+            'h1': pvs['01'],
+            'h2': pvs['02'],
+            'h3': pvs['03'],
+            'h4': pvs['04'],
+            'h5': pvs['05'],
+            'h6': pvs['06'],
+            'h7': pvs['07'],
+            'h8': pvs['08'],
+            'h9': pvs['09'],
+            'h10': pvs['10'],
+            'h11': pvs['11'],
+            'h12': pvs['12'],
+            'h13': pvs['13'],
+            'h14': pvs['14'],
+            'h15': pvs['15'],
+            'h16': pvs['16'],
+            'h17': pvs['17'],
+            'h18': pvs['18'],
+            'h19': pvs['19'],
+            'h20': pvs['20'],
+            'h21': pvs['21'],
+            'h22': pvs['22'],
+            'h23': pvs['23'],
             'date': data.get('date')
             }
-
     html = report_html_header + html_body + report_html_end % hours_pv
     html_file = '../result/report/'+data.get('source_file')+'.html'
     with open(html_file, 'w') as f:
