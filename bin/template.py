@@ -16,6 +16,7 @@ td{
     color:green;
 }
 </style>
+<link rel="stylesheet" href="../libs/morris.css">
 <head>
     <title>LogPaserReport</title>
 </head>
@@ -45,6 +46,13 @@ report_overall_html_table = """
             <td><strong>%(response_peak)s</strong></td>
             <td><strong>%(response_peak_time)s</strong></td>
             <td><strong>%(response_avg)s</strong></td>
+        </tr>
+    </table>
+
+    <table border='0' cellpadding='5' cellspacing='2' align='center' width='80%%'>
+        <caption align='left'>PV Chart (每小时PV变化曲线图)</caption>
+        <tr>
+            <td><div id="hoursChart" style="height: 250px;"></div></td>
         </tr>
     </table>
 """
@@ -77,6 +85,44 @@ report_top_request_html_table_body = """
 
 report_html_end = """
     </table>
+
+<script src="../libs/jquery.min.js"></script>
+<script src="../libs//raphael-min.js"></script>
+<script src="../libs/morris.min.js"></script>
+<script>
+new Morris.Line({
+    element: 'hoursChart',
+    data: [
+        { hour: '%(date)s 00:00', pv: %(h0)d },
+        { hour: '%(date)s 01:00', pv: %(h1)d },
+        { hour: '%(date)s 02:00', pv: %(h2)d },
+        { hour: '%(date)s 03:00', pv: %(h3)d },
+        { hour: '%(date)s 04:00', pv: %(h4)d },
+        { hour: '%(date)s 05:00', pv: %(h5)d },
+        { hour: '%(date)s 06:00', pv: %(h6)d },
+        { hour: '%(date)s 07:00', pv: %(h7)d },
+        { hour: '%(date)s 08:00', pv: %(h8)d },
+        { hour: '%(date)s 09:00', pv: %(h9)d },
+        { hour: '%(date)s 10:00', pv: %(h10)d },
+        { hour: '%(date)s 11:00', pv: %(h11)d },
+        { hour: '%(date)s 12:00', pv: %(h12)d },
+        { hour: '%(date)s 13:00', pv: %(h13)d },
+        { hour: '%(date)s 14:00', pv: %(h14)d },
+        { hour: '%(date)s 15:00', pv: %(h15)d },
+        { hour: '%(date)s 16:00', pv: %(h16)d },
+        { hour: '%(date)s 17:00', pv: %(h17)d },
+        { hour: '%(date)s 18:00', pv: %(h18)d },
+        { hour: '%(date)s 19:00', pv: %(h19)d },
+        { hour: '%(date)s 20:00', pv: %(h20)d },
+        { hour: '%(date)s 21:00', pv: %(h21)d },
+        { hour: '%(date)s 22:00', pv: %(h22)d },
+        { hour: '%(date)s 23:00', pv: %(h23)d },
+        ],
+        xkey: ['hour'],
+        ykeys: ['pv'],
+        labels: ['pv']
+    });
+</script>
 </body>
 </html>
 """
