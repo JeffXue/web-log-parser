@@ -16,7 +16,7 @@ td{
     color:green;
 }
 </style>
-<link rel="stylesheet" href="../libs/morris.css">
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 <head>
     <title>LogPaserReport</title>
 </head>
@@ -86,9 +86,9 @@ report_top_request_html_table_body = """
 report_html_end = """
     </table>
 
-<script src="../libs/jquery.min.js"></script>
-<script src="../libs//raphael-min.js"></script>
-<script src="../libs/morris.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 <script>
 new Morris.Line({
     element: 'hoursChart',
