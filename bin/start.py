@@ -71,6 +71,7 @@ def parse_log_file(target_file, log_format):
     hosts = []
     times = []
     hours = []
+    minutes = []
     urls = []
     with open('../data/'+target_file, 'r') as f:
         for line in f:
@@ -78,6 +79,7 @@ def parse_log_file(target_file, log_format):
             hosts.append(line[log_format.get('host_index')])
             times.append(line[log_format.get('time_index')])
             hours.append(line[log_format.get('time_index')].split(':')[1])
+            minutes.append(':'.join(line[log_format.get('time_index')].split(':')[1:-1]))
             if config.is_with_parameters:
                 url = get_new_url(line[log_format.get('url_index')])
             else:
@@ -91,15 +93,16 @@ def parse_log_file(target_file, log_format):
     uv = len(set(hosts))
     response_avg = pv/len(set(times))
 
+    hours_counter = Counter(hours)
+    minutes_counter = Counter(minutes)
     times_counter = Counter(times)
+    minutes_counter = Counter(minutes)
     response_most_common = times_counter.most_common(1)[0]
     response_peak = response_most_common[1]
     response_peak_time = response_most_common[0].replace('[', '')
 
     temp_date = time.strptime(response_peak_time,'%d/%b/%Y:%H:%M:%S')
     date =time.strftime('%Y-%m-%d', temp_date)
-
-    hours_counter = Counter(hours)
 
     urls_counter = Counter(urls)
     urls_most_common = urls_counter.most_common(config.urls_most_number)
@@ -128,7 +131,7 @@ def parse_log_file(target_file, log_format):
 
     total_data = {'pv': pv, 'uv': uv, 'response_avg': response_avg, 'response_peak': response_peak,
                   'response_peak_time': response_peak_time, 'url_data_list': url_data_list,
-                  'source_file': target_file, 'hours_hits': hours_counter, 'date': date}
+                  'source_file': target_file, 'hours_hits': hours_counter, 'minutes_hits': minutes_counter, 'date': date}
     generate_web_log_parser_report(total_data)
 
     total_data = {'source_file': target_file, 'urls': urls_counter}

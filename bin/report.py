@@ -61,7 +61,16 @@ def generate_web_log_parser_report(data):
             'h23': pvs['23'],
             'date': data.get('date')
             }
-    html = report_html_header + html_body + report_html_end % hours_pv
+
+    pvs = data.get('minutes_hits')
+    minutes_pv = {'date': data.get('date')}
+    for h in xrange(24):
+        for m in xrange(60):
+            key = str('%02d' % h) + ':' + str('%02d' % m)
+            value = pvs[key]
+            minutes_pv.setdefault(key, value)
+
+    html = report_html_header + html_body + report_html_end % dict(hours_pv.items()+minutes_pv.items())
     html_file = '../result/report/'+data.get('source_file')+'.html'
     with open(html_file, 'w') as f:
         f.write(html)
