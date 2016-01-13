@@ -127,7 +127,7 @@ new Morris.Line({
         ],
     xkey: ['hour'],
     ykeys: ['pv'],
-    labels: ['pv']
+    labels: ['pv'],
     });
 new Morris.Line({
     element: 'minutesChart',
@@ -1575,7 +1575,7 @@ new Morris.Line({
         ],
     xkey: ['minute'],
     ykeys: ['pv'],
-    labels: ['pv']
+    labels: ['pv'],
     lineWidth: 1,
     pointSize: 0
     });
