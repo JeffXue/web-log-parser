@@ -2,3 +2,4 @@
 *.log
 *.html
 *_log_*
+data/*
