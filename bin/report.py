@@ -6,6 +6,12 @@ from template import report_html_header
 from template import report_overall_html_table
 from template import report_top_request_html_table_header
 from template import report_top_request_html_table_body
+from template import report_hour_data_header
+from template import report_hour_data
+from template import report_minute_data_header
+from template import report_minute_data
+from template import report_second_data_header
+from template import report_second_data
 from template import report_html_end
 from template import index_html_header
 from template import index_html_li
@@ -34,43 +40,23 @@ def generate_web_log_parser_report(data):
                          'method': url_data.url.split()[0].replace('"', '')}
         html_body += report_top_request_html_table_body % url_data_dict
     
-    pvs = data.get('hours_hits')
-    hours_pv = {'h0': pvs['00'],
-            'h1': pvs['01'],
-            'h2': pvs['02'],
-            'h3': pvs['03'],
-            'h4': pvs['04'],
-            'h5': pvs['05'],
-            'h6': pvs['06'],
-            'h7': pvs['07'],
-            'h8': pvs['08'],
-            'h9': pvs['09'],
-            'h10': pvs['10'],
-            'h11': pvs['11'],
-            'h12': pvs['12'],
-            'h13': pvs['13'],
-            'h14': pvs['14'],
-            'h15': pvs['15'],
-            'h16': pvs['16'],
-            'h17': pvs['17'],
-            'h18': pvs['18'],
-            'h19': pvs['19'],
-            'h20': pvs['20'],
-            'h21': pvs['21'],
-            'h22': pvs['22'],
-            'h23': pvs['23'],
-            'date': data.get('date')
-            }
+    hours_pv = data.get('hours_hits')
+    minutes_pv = data.get('minutes_hits')
+    seconds_pv = data.get('second_hits')
+    
+    html_body += report_hour_data_header
+    for hour in sorted(list(hours_pv)):
+        html_body += report_hour_data % {'hour': hour, 'pv': hours_pv[hour]}
+    
+    html_body += report_minute_data_header
+    for minute in sorted(list(minutes_pv)):
+        html_body += report_minute_data % {'minute': minute, 'pv': minutes_pv[minute]}
+    
+    html_body += report_second_data_header
+    for second in sorted(list(seconds_pv)):
+        html_body += report_second_data % {'second': second, 'pv': seconds_pv[second]}
 
-    pvs = data.get('minutes_hits')
-    minutes_pv = {'date': data.get('date')}
-    for h in xrange(24):
-        for m in xrange(60):
-            key = str('%02d' % h) + ':' + str('%02d' % m)
-            value = pvs[key]
-            minutes_pv.setdefault(key, value)
-
-    html = report_html_header + html_body + report_html_end % dict(hours_pv.items()+minutes_pv.items())
+    html = report_html_header + html_body + report_html_end
     html_file = '../result/report/'+data.get('source_file')+'.html'
     with open(html_file, 'w') as f:
         f.write(html)
