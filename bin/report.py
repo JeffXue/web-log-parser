@@ -10,8 +10,8 @@ from template import report_hour_data_header
 from template import report_hour_data
 from template import report_minute_data_header
 from template import report_minute_data
-from template import report_second_data_header
-from template import report_second_data
+#from template import report_second_data_header
+#from template import report_second_data
 from template import report_html_end
 from template import index_html_header
 from template import index_html_li
@@ -52,9 +52,9 @@ def generate_web_log_parser_report(data):
     for minute in sorted(list(minutes_pv)):
         html_body += report_minute_data % {'minute': minute, 'pv': minutes_pv[minute]}
     
-    html_body += report_second_data_header
-    for second in sorted(list(seconds_pv)):
-        html_body += report_second_data % {'second': second, 'pv': seconds_pv[second]}
+    #html_body += report_second_data_header
+    #for second in sorted(list(seconds_pv)):
+    #    html_body += report_second_data % {'second': second, 'pv': seconds_pv[second]}
 
     html = report_html_header + html_body + report_html_end
     html_file = '../result/report/'+data.get('source_file')+'.html'

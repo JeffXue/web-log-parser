@@ -126,25 +126,25 @@ new Morris.Line({
 report_minute_data = """{ minute: '%(minute)s', pv: %(pv)d },
 """
 
-report_second_data_header = """
-        ],
-    xkey: ['minute'],
-    ykeys: ['pv'],
-    labels: ['pv'],
-    lineWidth: 1,
-    pointSize: 0
-    });
-new Morris.Line({
-    element: 'secondChart',
-    data: [
-    """
-
-report_second_data = """{ second: '%(second)s', pv: %(pv)d },
-"""
+#report_second_data_header = """
+#        ],
+#    xkey: ['minute'],
+#    ykeys: ['pv'],
+#    labels: ['pv'],
+#    lineWidth: 1,
+#    pointSize: 0
+#    });
+#new Morris.Line({
+#    element: 'secondChart',
+#    data: [
+#    """
+#
+#report_second_data = """{ second: '%(second)s', pv: %(pv)d },
+#"""
 
 report_html_end = """
         ],
-    xkey: ['second'],
+    xkey: ['minute'],
     ykeys: ['pv'],
     labels: ['pv'],
     lineWidth: 1,
@@ -154,6 +154,19 @@ report_html_end = """
 </body>
 </html>
 """
+
+#report_html_end = """
+#        ],
+#    xkey: ['second'],
+#    ykeys: ['pv'],
+#    labels: ['pv'],
+#    lineWidth: 1,
+#    pointSize: 0
+#    });
+#</script>
+#</body>
+#</html>
+#"""
 
 index_html_header = """
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
