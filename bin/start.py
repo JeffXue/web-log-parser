@@ -46,6 +46,13 @@ def not_static_file(url):
     else:
         return False
 
+def is_ignore_url(url):
+    url_front = url.split('?')[0]
+    if url_front not in config.ignore_urls:
+        return False
+    else:
+        return True
+
 
 def get_new_url(origin_url):
     if len(origin_url.split('?')) == 1:
@@ -76,16 +83,18 @@ def parse_log_file(target_file, log_format):
     with open('../data/'+target_file, 'r') as f:
         for line in f:
             line = line.split()
+            if config.is_with_parameters:
+                url = get_new_url(line[log_format.get('url_index')])
+            else:
+                url = line[log_format.get('url_index')].split('?')[0]
+            if is_ignore_url(url):
+                continue
             hosts.append(line[log_format.get('host_index')])
             log_time = time.strftime('%Y-%m-%d %H:%M:%S', 
                     time.strptime(line[log_format.get('time_index')].replace('[', ''), '%d/%b/%Y:%H:%M:%S'))
             times.append(log_time)
             hours.append(log_time.split(':')[0])
             minutes.append(':'.join(log_time.split(':')[0:-1]))
-            if config.is_with_parameters:
-                url = get_new_url(line[log_format.get('url_index')])
-            else:
-                url = line[log_format.get('url_index')].split('?')[0]
             if not_static_file(url):
                 method = line[log_format.get('method_index')]
                 protocol = line[log_format.get('protocol_index')]

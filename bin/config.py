@@ -21,6 +21,7 @@ class Config():
         self.fixed_parameter_keys = all_config.get('common', 'fixed_parameter_keys').split(',')
         self.custom_parameters_list = all_config.get('common', 'custom_parameters').split(',')
         self.urls_most_number = int(all_config.get('common', 'urls_most_number'))
+        self.ignore_urls = all_config.get('common', 'ignore_urls').split(',')
 
         self.custom_keys = []
         self.custom_parameters = {}
