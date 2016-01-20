@@ -130,7 +130,7 @@ def parse_log_file(target_file, log_format):
 
     total_data = {'pv': pv, 'uv': uv, 'response_avg': response_avg, 'response_peak': response_peak,
                   'response_peak_time': response_peak_time, 'url_data_list': url_data_list,
-                  'source_file': target_file, 'hours_hits': hours_counter, 'minutes_hits': minutes_counter, 'second_hits': times_counter}
+                  'source_file': target_file, 'hours_hits': hours_counter, 'minutes_hits': minutes_counter}
     generate_web_log_parser_report(total_data)
 
     total_data = {'source_file': target_file, 'urls': urls_counter}

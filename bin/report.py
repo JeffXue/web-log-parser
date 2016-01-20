@@ -42,7 +42,7 @@ def generate_web_log_parser_report(data):
     
     hours_pv = data.get('hours_hits')
     minutes_pv = data.get('minutes_hits')
-    seconds_pv = data.get('second_hits')
+    #seconds_pv = data.get('second_hits')
     
     html_body += report_hour_data_header
     for hour in sorted(list(hours_pv)):
