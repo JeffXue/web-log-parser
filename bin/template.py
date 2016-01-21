@@ -189,6 +189,54 @@ index_html_end = """
 </html>
 """
 
+index2_html_header = """
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>WebLogParser Report Index2</title>
+    <link href="http://cdn.bootcss.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/bootstrap/2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <script type="text/javascript" language="Javascript">
+    function $Name(tagName) {
+      return document.getElementsByTagName(tagName);
+    }
+    
+    function replaceReport() {
+        var fileName = arguments[0];
+        var iframeNode = $Name("iframe")[0];
+        iframeNode.setAttribute("src", "report/"+fileName);
+    }
+</script>
+
+</head>
+<body>
+<div class="row">
+    <div class="span3 bs-docs-sidebar">
+    <h4>WebLogPaser Report Index</h4>
+    <p align="center"><strong>分析日志结果列表</strong><p>
+    <ul class="nav nav-list bs-docs-sidenav">
+"""
+
+index2_html_li = """
+    <li><input class="btn btn-info" value="%(filename)s" onclick="replaceReport('%(filename)s');"/></li>
+"""
+
+index2_session = """
+    </ul>
+    </div>
+    <div class="span12">
+    <iframe name="content_frame" width=130%% height=5000 src="report/%(firstFilename)s" frameborder=0></iframe>
+"""
+
+index2_html_end = """
+    </div>
+</div>
+<script src="http://cdn.bootcss.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+"""
+
 url_html_header = """
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
 <html>

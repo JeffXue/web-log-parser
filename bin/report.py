@@ -16,6 +16,10 @@ from template import report_html_end
 from template import index_html_header
 from template import index_html_li
 from template import index_html_end
+from template import index2_html_header
+from template import index2_html_li
+from template import index2_session
+from template import index2_html_end
 from template import url_html_header
 from template import url_html_table_body
 from template import url_html_end
@@ -80,7 +84,20 @@ def update_index_html():
         else:
             html += index_html_li % {'web_log_parser_file': report_file}
     html += index_html_end
-
     with open('../result/index.html', 'w') as f:
         f.write(html)
+
+    html2 = index2_html_header
+    first_filename = None
+    for report_file in sorted(get_dir_files('../result/report/')):
+        if report_file.find('GoAccess') != -1 or report_file.find('.git') != -1 :
+            pass
+        else:
+            if first_filename == None:
+                first_filename = report_file
+            html2 += index2_html_li % {'filename': report_file}
+    html2 += index2_session % {'firstFilename': first_filename}
+    html2 += index2_html_end
+    with open('../result/index2.html', 'w') as f:
+        f.write(html2)
 
