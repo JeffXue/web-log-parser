@@ -196,8 +196,12 @@ index2_html_header = """
     <title>WebLogParser Report Index2</title>
     <link href="http://cdn.bootcss.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://cdn.bootcss.com/bootstrap/2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet">
-
-    <script type="text/javascript" language="Javascript">
+<style type="text/css">
+li{
+    margin-bottom:5px;
+}
+</style>
+<script type="text/javascript" language="Javascript">
     function $Name(tagName) {
       return document.getElementsByTagName(tagName);
     }
@@ -213,13 +217,12 @@ index2_html_header = """
 <body>
 <div class="row">
     <div class="span3 bs-docs-sidebar">
-    <h4>WebLogPaser Report Index</h4>
     <p align="center"><strong>分析日志结果列表</strong><p>
     <ul class="nav nav-list bs-docs-sidenav">
 """
 
 index2_html_li = """
-    <li><input class="btn btn-info" value="%(filename)s" onclick="replaceReport('%(filename)s');"/></li>
+    <li><input class="btn btn-default" value="%(filename)s" onclick="replaceReport('%(filename)s');"/></li>
 """
 
 index2_session = """
