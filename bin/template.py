@@ -35,7 +35,7 @@ report_overall_html_table = """
         </tr>
         <tr>
             <th><strong>总PV</strong></th>
-            <th><strong>总UV</strong></th>
+            <th><strong>总IP</strong></th>
             <th><strong>每秒最大处理消息数量</strong></th>
             <th><strong>最大处理消息时间</strong></th>
             <th><strong>每秒平均处理消息</strong></th>
