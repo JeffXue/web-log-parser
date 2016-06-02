@@ -1,9 +1,8 @@
 # -*- coding:utf-8 -*-
-__author__ = 'xuekj'
 import ConfigParser
 
 
-class Config():
+class Config:
     """get config from the ini file"""
 
     def __init__(self, config_file):
@@ -33,5 +32,7 @@ class Config():
                 value = ''
             self.custom_parameters.setdefault(key, value)
             self.custom_keys.append(key)
+
+        self.second_line_flag = int(all_config.get('common', 'second_line_flag'))
 
 config = Config('../conf/config.ini')

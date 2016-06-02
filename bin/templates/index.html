@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<title>WebLogPaser Report Index</title>
+<body>
+  <h1>WebLogPaser Report Index</h1>
+  <ul>
+    {% for file in files %}
+      {% if file.find('GoAccess') == -1 %}
+        {% if file.find('.git') == -1 %}
+    <li><a href="report/{{ file }}" target="_WebLogPaserReport">{{ file }}</a></li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </ul>
+</body>
+{% endblock%}

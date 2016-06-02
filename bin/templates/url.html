@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<title>LogPaserURLs</title>
+<body>
+<div align="center">
+  <table class="bordered">
+    <caption>日志文件{{ data['source_file'] }} URL汇总</caption>
+    <tr>
+      <th>序号</th>
+      <th colspan="11">URL</th>
+      <th>Method</th>
+      <th>Protocol</th>
+    </tr>
+    {% for url_data in url_datas %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td colspan="11">{{ url_data.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</td>
+      <td>{{ url_data.split()[0].replace('"', '') }}</td>
+      <td>{{ url_data.split()[2].replace('"', '') }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+</body>
+{% endblock%}

@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-__author__ = 'xuekj'
 import time
 import datetime
 import os
@@ -12,7 +11,7 @@ from report import generate_web_log_parser_urls
 from report import update_index_html
 
 
-class URLData():
+class URLData:
 
     def __init__(self, url=None, pv=None, ratio=None, peak=None):
         self.url = url
@@ -45,6 +44,7 @@ def not_static_file(url):
         return True
     else:
         return False
+
 
 def is_ignore_url(url):
     url_front = url.split('?')[0]
@@ -90,8 +90,8 @@ def parse_log_file(target_file, log_format):
             if is_ignore_url(url):
                 continue
             hosts.append(line[log_format.get('host_index')])
-            log_time = time.strftime('%Y-%m-%d %H:%M:%S', 
-                    time.strptime(line[log_format.get('time_index')].replace('[', ''), '%d/%b/%Y:%H:%M:%S'))
+            log_time = time.strftime('%Y-%m-%d %H:%M:%S',
+                                     time.strptime(line[log_format.get('time_index')].replace('[', ''), '%d/%b/%Y:%H:%M:%S'))
             times.append(log_time)
             hours.append(log_time.split(':')[0])
             minutes.append(':'.join(log_time.split(':')[0:-1]))
@@ -102,7 +102,7 @@ def parse_log_file(target_file, log_format):
 
     pv = len(times)
     uv = len(set(hosts))
-    response_avg = pv/len(set(times))
+    response_avg = int(pv/len(set(times)))
 
     hours_counter = Counter(hours)
     minutes_counter = Counter(minutes)
@@ -139,7 +139,8 @@ def parse_log_file(target_file, log_format):
 
     total_data = {'pv': pv, 'uv': uv, 'response_avg': response_avg, 'response_peak': response_peak,
                   'response_peak_time': response_peak_time, 'url_data_list': url_data_list,
-                  'source_file': target_file, 'hours_hits': hours_counter, 'minutes_hits': minutes_counter}
+                  'source_file': target_file, 'hours_hits': hours_counter, 'minutes_hits': minutes_counter,
+                  'second_hits': times_counter}
     generate_web_log_parser_report(total_data)
 
     total_data = {'source_file': target_file, 'urls': urls_counter}

@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-__author__ = 'xuekj'
 import os
 
 
