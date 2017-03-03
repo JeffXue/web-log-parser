@@ -3,3 +3,4 @@
 *.html
 *_log_*
 data/*
+.idea
