@@ -14,6 +14,7 @@ class Config:
         self.time_format = all_config.get('common', 'time-format')
         self.date_format = all_config.get('common', 'date-format')
         self.log_format = all_config.get('common', 'log-format')
+        self.log_pattern = all_config.get('common', 'log-pattern')
         self.goaccess_log_format = all_config.get('common', 'goaccess-log-format')
         self.static_file = all_config.get('common', 'static-file').split(',')
         self.is_with_parameters = int(all_config.get('common', 'is_with_parameters'))

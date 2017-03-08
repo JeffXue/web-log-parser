@@ -2,6 +2,7 @@
 import time
 import datetime
 import os
+import re
 from collections import Counter
 
 from util import get_dir_files
@@ -25,16 +26,24 @@ def parse_log_format():
     log_format_index = {}
     log_format_list = config.log_format.split()
     for item in log_format_list:
-        if item.find(r'%h') != -1:
-            log_format_index.setdefault('host_index', log_format_list.index(item))
-        if item.find(r'%d') != -1 and item.find(r'%t') != -1:
-            log_format_index.setdefault('time_index', log_format_list.index(item))
-        if item.find(r'%U') != -1:
-            log_format_index.setdefault('url_index', log_format_list.index(item))
-        if item.find(r'%m') != -1:
-            log_format_index.setdefault('method_index', log_format_list.index(item))
-        if item.find(r'%H') != -1:
-            log_format_index.setdefault('protocol_index', log_format_list.index(item))
+        if item == 'ip':
+            log_format_index.setdefault('ip_index', log_format_list.index(item)+1)
+        if item == 'real_ip':
+            log_format_index.setdefault('real_ip_index', log_format_list.index(item)+1)
+        if item == 'datetime':
+            log_format_index.setdefault('time_index', log_format_list.index(item)+1)
+        if item == 'url':
+            log_format_index.setdefault('url_index', log_format_list.index(item)+1)
+        if item == 'method':
+            log_format_index.setdefault('method_index', log_format_list.index(item)+1)
+        if item == 'protocol':
+            log_format_index.setdefault('protocol_index', log_format_list.index(item)+1)
+        if item == 'cost':
+            log_format_index.setdefault('cost_time_index', log_format_list.index(item)+1)
+    if 'real_ip_index' in log_format_index.keys():
+        log_format_index.setdefault('host_index', log_format_list.index('real_ip')+1)
+    else:
+        log_format_index.setdefault('host_index', log_format_list.index('ip')+1)
     return log_format_index
 
 
@@ -80,24 +89,27 @@ def parse_log_file(target_file, log_format):
     hours = []
     minutes = []
     urls = []
+    pattern = re.compile(config.log_pattern)
     with open('../data/'+target_file, 'r') as f:
         for line in f:
-            line = line.split()
+            match = pattern.match(line)
+            if match is None:
+                continue
             if config.is_with_parameters:
-                url = get_new_url(line[log_format.get('url_index')])
+                url = get_new_url(match.group(log_format.get('url_index')))
             else:
-                url = line[log_format.get('url_index')].split('?')[0]
+                url = match.group(log_format.get('url_index')).split('?')[0]
             if is_ignore_url(url):
                 continue
-            hosts.append(line[log_format.get('host_index')])
-            log_time = time.strftime('%Y-%m-%d %H:%M:%S',
-                                     time.strptime(line[log_format.get('time_index')].replace('[', ''), '%d/%b/%Y:%H:%M:%S'))
+            hosts.append(match.group(log_format.get('host_index')).split(',')[0])
+            log_time = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(match.group(log_format.get('time_index')),
+                                                                        '%d/%b/%Y:%H:%M:%S'))
             times.append(log_time)
             hours.append(log_time.split(':')[0])
             minutes.append(':'.join(log_time.split(':')[0:-1]))
             if not_static_file(url):
-                method = line[log_format.get('method_index')]
-                protocol = line[log_format.get('protocol_index')]
+                method = match.group(log_format.get('method_index'))
+                protocol = match.group(log_format.get('protocol_index'))
                 urls.append(method+' '+url+' '+protocol)
 
     pv = len(times)
@@ -122,16 +134,16 @@ def parse_log_file(target_file, log_format):
 
     with open('../data/'+target_file, 'r') as f:
         for line in f:
-            line_list = line.split()
-            method = line_list[log_format.get('method_index')]
+            match = pattern.match(line)
+            method = match.group(log_format.get('method_index'))
             if config.is_with_parameters:
-                url = get_new_url(line_list[log_format.get('url_index')])
+                url = get_new_url(match.group(log_format.get('url_index')))
             else:
-                url = line_list[log_format.get('url_index')].split('?')[0]
-            protocol = line_list[log_format.get('protocol_index')]
+                url = match.group(log_format.get('url_index')).split('?')[0]
+            protocol = match.group(log_format.get('protocol_index'))
             for url_data in url_data_list:
                 if url_data.url == method+' '+url+' '+protocol:
-                    url_data.time.append(line_list[log_format.get('time_index')])
+                    url_data.time.append(match.group(log_format.get('time_index')))
                     break
 
     for url_data in url_data_list:
