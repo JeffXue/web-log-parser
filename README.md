@@ -24,7 +24,9 @@
 - goaccess_flag 是否获取GoAccess分析结果，设置为1：获取，0:不获取（需要已安装GoAccess）
 - time-format 日志中的时间格式，用于GoAccess
 - date-format 日志中的日期格式，用于GoAccess
-- log-format 日志内容格式，用于本工具和GoAccess
+- log-pattern 解析日志的正则表达式
+- log-format 日志内容格式，用于本工具，每项对应log-pattern匹配项
+- goaccess-log-format 日志格式，用于GoAccess
 - static-file 静态文件后缀，本工具在统计URL时将过滤静态文件
 - is_with_parameters 统计URL是否使用URL中参数一起进行分析，设置为1：使用参数， 0：不使用；默认将转换URL中参数，如?key=123统计时记录为key={key}
 - custom_parameters 配置特殊的参数键值对，以逗号分隔，配置的t={timeStramp}，在分析参数时会将t键的值替换为固定的{timeStramp}
