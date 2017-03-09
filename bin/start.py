@@ -137,6 +137,8 @@ def parse_log_file(target_file, log_format):
     with open('../data/'+target_file, 'r') as f:
         for line in f:
             match = pattern.match(line)
+            if match is None:
+                continue
             method = match.group(log_format.get('method_index'))
             if config.is_with_parameters:
                 url = get_new_url(match.group(log_format.get('url_index')))
