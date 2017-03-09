@@ -1,83 +1,115 @@
 {% extends "base.html" %}
 
 {% block content %}
-<body>
-<div align="center">
-  <h1 align="center">WebLogPaser</h1>
-  <table class="bordered">
-    <caption align="left">Overall Analyzed Requests</caption>
-    <tr>
-      <th><strong>日志文件</strong></th>
-      <td colspan="3"><strong>{{ data['source_file'] }}</strong></td>
-      <td>
-        <a href="{{ data['goaccess_file'] }}" target="_goaccess">{{ data['goaccess_title'] }}</a>
-      </td>
-    </tr>
-    <tr>
-      <th><strong>总PV</strong></th>
-      <th><strong>总IP</strong></th>
-      <th><strong>每秒最大处理消息数量</strong></th>
-      <th><strong>最大处理消息时间</strong></th>
-      <th><strong>每秒平均处理消息</strong></th>
-    </tr>
-    <tr>
-      <td><strong>{{ data['pv'] }}</strong></td>
-      <td><strong>{{ data['uv'] }}</strong></td>
-      <td><strong>{{ data['response_peak'] }}</strong></td>
-      <td><strong>{{ data['response_peak_time'] }}</strong></td>
-      <td><strong>{{ data['response_avg'] }}</strong></td>
-    </tr>
-  </table>
-
-  <table class="bordered">
-    <caption align="left">PV Chart (每小时PV变化曲线图)</caption>
-    <tr>
-      <td><div id="hoursChart"></div></td>
-    </tr>
-  </table>
-
-  <table class="bordered">
-    <caption align="left">PV Chart (每分钟PV变化曲线图)</caption>
-    <tr>
-      <td><div id="minutesChart"></div></td>
-    </tr>
-  </table>
-
-  {% if second_line_flag %}
-  <table class="bordered">
-      <caption align="left">PV Chart (每秒PV变化曲线图)</caption>
+  <body>
+  <div align="center">
+    <h1 align="center">WebLogPaser</h1>
+    <table class="bordered">
+      <caption align="left">Overall Analyzed Requests</caption>
       <tr>
-          <td><div id="secondChart"></div></td>
+        <th><strong>日志文件</strong></th>
+        <td colspan="3"><strong>{{ data['source_file'] }}</strong></td>
+        <td>
+          <a href="{{ data['goaccess_file'] }}" target="_goaccess">{{ data['goaccess_title'] }}</a>
+        </td>
       </tr>
-  </table>
-  {% endif %}
+      <tr>
+        <th><strong>总PV</strong></th>
+        <th><strong>总IP</strong></th>
+        <th><strong>每秒最大处理消息数量</strong></th>
+        <th><strong>最大处理消息时间</strong></th>
+        <th><strong>每秒平均处理消息</strong></th>
+      </tr>
+      <tr>
+        <td><strong>{{ data['pv'] }}</strong></td>
+        <td><strong>{{ data['uv'] }}</strong></td>
+        <td><strong>{{ data['response_peak'] }}</strong></td>
+        <td><strong>{{ data['response_peak_time'] }}</strong></td>
+        <td><strong>{{ data['response_avg'] }}</strong></td>
+      </tr>
+    </table>
 
-  <table class="bordered">
-    <caption>
-      Top requests<a href="../urls/{{ web_log_urls_file }}" target="_urls" >（查看所有URL）</a>
-    </caption>
-    <tr>
-      <th colspan="6"><strong>Requests</strong></th>
-      <th><strong>访问量</strong></th>
-      <th><strong>比例</strong></th>
-      <th><strong>每秒最大处<br/>理消息数量</strong></th>
-      <th><strong>Method</strong></th>
-      <th><strong>Protocol</strong></th>
-    </tr>
+    <table class="bordered">
+      <caption align="left">PV Chart (每小时PV变化曲线图)</caption>
+      <tr>
+        <td>
+          <div id="hoursChart"></div>
+        </td>
+      </tr>
+    </table>
 
-    {% for url_data in data['url_data_list'] %}
-    <tr>
-      <td colspan="6"><strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong></td>
-      <td><strong>{{ url_data.pv }}</strong></td>
-      <td><strong>{{ url_data.ratio }}%</strong></td>
-      <td><strong>{{ url_data.peak }}</strong></td>
-      <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
-      <td><strong>{{ url_data.url.split()[2].replace('"', '') }}</strong></td>
-    </tr>
-    {% endfor %}
+    <table class="bordered">
+      <caption align="left">PV Chart (每分钟PV变化曲线图)</caption>
+      <tr>
+        <td>
+          <div id="minutesChart"></div>
+        </td>
+      </tr>
+    </table>
 
-  </table>
-</div>
+    {% if second_line_flag %}
+      <table class="bordered">
+        <caption align="left">PV Chart (每秒PV变化曲线图)</caption>
+        <tr>
+          <td>
+            <div id="secondChart"></div>
+          </td>
+        </tr>
+      </table>
+    {% endif %}
+
+    <table class="bordered">
+      <caption>
+        Top requests<a href="../urls/{{ web_log_urls_file }}" target="_urls">（查看所有URL）</a>
+      </caption>
+      {% if data['url_data_list'][0].cost %}
+        <tr>
+          <th colspan="6" rowspan="2"><strong>Requests</strong></th>
+          <th rowspan="2"><strong>访问量</strong></th>
+          <th rowspan="2"><strong>比例</strong></th>
+          <th rowspan="2"><strong>每秒最大处<br/>理消息数量</strong></th>
+          <th rowspan="2"><strong>Method</strong></th>
+          <th rowspan="2"><strong>Protocol</strong></th>
+          <th colspan="4"><strong>耗时</strong></th>
+        </tr>
+        <tr>
+          <th><strong>均值</strong></th>
+          <th><strong>90%</strong></th>
+          <th><strong>中值</strong></th>
+          <th><strong>方差</strong></th>
+        </tr>
+      {% else %}
+        <tr>
+          <th colspan="6"><strong>Requests</strong></th>
+          <th><strong>访问量</strong></th>
+          <th><strong>比例</strong></th>
+          <th><strong>每秒最大处<br/>理消息数量</strong></th>
+          <th><strong>Method</strong></th>
+          <th><strong>Protocol</strong></th>
+        </tr>
+      {% endif %}
+
+      {% for url_data in data['url_data_list'] %}
+        <tr>
+          <td colspan="6">
+            <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
+          </td>
+          <td><strong>{{ url_data.pv }}</strong></td>
+          <td><strong>{{ url_data.ratio }}%</strong></td>
+          <td><strong>{{ url_data.peak }}</strong></td>
+          <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+          <td><strong>{{ url_data.url.split()[2].replace('"', '') }}</strong></td>
+          {% if url_data.cost %}
+            <td><strong>{{ url_data.cost_time['avg'] }}</strong></td>
+            <td><strong>{{ url_data.cost_time['p9'] }}</strong></td>
+            <td><strong>{{ url_data.cost_time['p5'] }}</strong></td>
+            <td><strong>{{ url_data.cost_time['variance'] }}</strong></td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+
+    </table>
+  </div>
 
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
@@ -88,7 +120,7 @@
       data: [
 
         {% for hour in hours_pv %}
-        { hour: '{{ hour }}:00', pv: {{ data['hours_hits'][hour] }} },
+          {hour: '{{ hour }}:00', pv: {{ data['hours_hits'][hour] }}},
         {% endfor %}
 
       ],
@@ -102,7 +134,7 @@
       data: [
 
         {% for minute in minutes_pv %}
-        { minute: '{{ minute }}', pv: {{ data['minutes_hits'][minute] }} },
+          {minute: '{{ minute }}', pv: {{ data['minutes_hits'][minute] }}},
         {% endfor %}
 
       ],
@@ -114,23 +146,23 @@
     });
 
     {% if second_line_flag %}
-    new Morris.Line({
-      element: 'secondChart',
-      data: [
+      new Morris.Line({
+        element: 'secondChart',
+        data: [
 
-        {% for second in seconds_pv %}
-        { second: '{{ second }}', pv: {{ data['second_hits'][second] }} },
-        {% endfor %}
+          {% for second in seconds_pv %}
+            {second: '{{ second }}', pv: {{ data['second_hits'][second] }}},
+          {% endfor %}
 
-      ],
-      xkey: ['second'],
-      ykeys: ['pv'],
-      labels: ['pv'],
-      lineWidth: 1,
-      pointSize: 0
-    });
+        ],
+        xkey: ['second'],
+        ykeys: ['pv'],
+        labels: ['pv'],
+        lineWidth: 1,
+        pointSize: 0
+      });
     {% endif %}
   </script>
 
-</body>
-{% endblock%}
+  </body>
+{% endblock %}

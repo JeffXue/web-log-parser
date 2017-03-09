@@ -4,6 +4,7 @@ import datetime
 import os
 import re
 from collections import Counter
+from numpy import var, average, percentile
 
 from util import get_dir_files
 from config import config
@@ -20,7 +21,8 @@ class URLData:
         self.ratio = ratio
         self.peak = peak
         self.time = []
-
+        self.cost = []
+        self.cost_time = {'p9': None, 'p8': None, 'p5': None, 'avg': None, 'variance': None}
 
 def parse_log_format():
     log_format_index = {}
@@ -144,10 +146,18 @@ def parse_log_file(target_file, log_format):
             for url_data in url_data_list:
                 if url_data.url == method+' '+url+' '+protocol:
                     url_data.time.append(match.group(log_format.get('time_index')))
+                    if 'cost_time_index' in log_format.keys():
+                        url_data.cost.append(float(match.group(log_format.get('cost_time_index'))))
                     break
 
     for url_data in url_data_list:
         url_data.peak = Counter(url_data.time).most_common(1)[0][1]
+        if url_data.cost:
+            url_data.cost_time['avg'] = '%0.3f' % float(average(url_data.cost))
+            url_data.cost_time['variance'] = int(var(url_data.cost))
+            url_data.cost_time['p9'] = '%0.3f' % percentile(url_data.cost, 90)
+            url_data.cost_time['p8'] = '%0.3f' % percentile(url_data.cost, 80)
+            url_data.cost_time['p5'] = '%0.3f' % percentile(url_data.cost, 50)
 
     total_data = {'pv': pv, 'uv': uv, 'response_avg': response_avg, 'response_peak': response_peak,
                   'response_peak_time': response_peak_time, 'url_data_list': url_data_list,
