@@ -29,34 +29,51 @@
       </tr>
     </table>
 
+    <br>
+
     <table class="bordered">
-      <caption align="left">PV Chart (每小时PV变化曲线图)</caption>
       <tr>
         <td>
-          <div id="hoursChart"></div>
+          <div id="methodChart" style="height:200px"></div>
         </td>
       </tr>
     </table>
 
+    <br>
+
     <table class="bordered">
-      <caption align="left">PV Chart (每分钟PV变化曲线图)</caption>
       <tr>
         <td>
-          <div id="minutesChart"></div>
+          <div id="hoursChart" style="height:400px; width: 670px;"></div>
+        </td>
+        <td>
+          <div id="minutesChart" style="height:400px; width: 670px;"></div>
         </td>
       </tr>
-    </table>
-
-    {% if second_line_flag %}
-      <table class="bordered">
-        <caption align="left">PV Chart (每秒PV变化曲线图)</caption>
+      {% if second_line_flag %}
         <tr>
           <td>
-            <div id="secondChart"></div>
+            <div id="secondChart" style="height:400px"></div>
           </td>
         </tr>
-      </table>
-    {% endif %}
+      {% endif %}
+    </table>
+
+    <br>
+
+    <table class="bordered">
+      <tr>
+        <td>
+          <div id="costPChart" style="height:400px; width: 670px;"></div>
+        </td>
+        <td>
+          <div id="costChart" style="height:400px; width: 670px;"></div>
+        </td>
+      </tr>
+    </table>
+
+
+    <br>
 
     <table class="bordered">
       <caption>
@@ -111,58 +128,260 @@
     </table>
   </div>
 
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
-  <script>
-    new Morris.Line({
-      element: 'hoursChart',
-      data: [
+  <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
 
-        {% for hour in hours_pv %}
-          {hour: '{{ hour }}:00', pv: {{ data['hours_hits'][hour] }}},
-        {% endfor %}
-
-      ],
-      xkey: ['hour'],
-      ykeys: ['pv'],
-      labels: ['pv'],
+  <script type="text/javascript">
+    require.config({
+      paths: {
+        echarts: 'http://echarts.baidu.com/build/dist'
+      }
     });
 
-    new Morris.Line({
-      element: 'minutesChart',
-      data: [
-
-        {% for minute in minutes_pv %}
-          {minute: '{{ minute }}', pv: {{ data['minutes_hits'][minute] }}},
-        {% endfor %}
-
-      ],
-      xkey: ['minute'],
-      ykeys: ['pv'],
-      labels: ['pv'],
-      lineWidth: 1,
-      pointSize: 0
-    });
-
-    {% if second_line_flag %}
-      new Morris.Line({
-        element: 'secondChart',
-        data: [
-
-          {% for second in seconds_pv %}
-            {second: '{{ second }}', pv: {{ data['second_hits'][second] }}},
-          {% endfor %}
-
+    require(
+        [
+          'echarts',
+          'echarts/theme/macarons',
+          'echarts/chart/bar',
+          'echarts/chart/line'
         ],
-        xkey: ['second'],
-        ykeys: ['pv'],
-        labels: ['pv'],
-        lineWidth: 1,
-        pointSize: 0
-      });
-    {% endif %}
+        function (ec, theme) {
+          var hoursChart = ec.init(document.getElementById('hoursChart'), theme);
+
+          var hoursOption = {
+            title: {
+              text: '每小时PV变化曲线图',
+              subtext: ''
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            legend: {
+              data: ['每小时PV']
+            },
+            toolbox: {
+              show: true,
+              feature: {
+                mark: {show: false},
+                dataView: {show: false, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: false},
+                saveAsImage: {show: true}
+              }
+            },
+            calculable: true,
+            xAxis: [
+              {
+                type: 'category',
+                boundaryGap: false,
+                data: [{% for hour in hours_pv %}'{{ hour }}:00',{% endfor %}]
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value',
+                axisLabel: {
+                  formatter: '{value}'
+                }
+              }
+            ],
+            series: [
+              {
+                name: 'PV',
+                type: 'line',
+                data: [{% for hour in hours_pv %}{{ data['hours_hits'][hour] }}, {% endfor %}],
+                markPoint: {
+                  data: [
+                    {type: 'max', name: '最大值'},
+                    {type: 'min', name: '最小值'}
+                  ]
+                },
+                markLine: {
+                  data: [
+                    {type: 'average', name: '平均值'}
+                  ]
+                }
+              }
+            ]
+          };
+
+          var minuteChart = ec.init(document.getElementById('minutesChart'), theme);
+
+          var minuteOption = {
+            title: {
+              text: '每分钟PV变化曲线图',
+              subtext: ''
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            legend: {
+              data: ['每分钟PV']
+            },
+            toolbox: {
+              show: true,
+              feature: {
+                mark: {show: false},
+                dataView: {show: false, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: false},
+                saveAsImage: {show: true}
+              }
+            },
+            calculable: true,
+            xAxis: [
+              {
+                type: 'category',
+                boundaryGap: false,
+                data: [{% for minute in minutes_pv %}'{{ minute }}',{% endfor %}]
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value',
+                axisLabel: {
+                  formatter: '{value}'
+                }
+              }
+            ],
+            series: [
+              {
+                name: 'PV',
+                type: 'line',
+                data: [{% for minute in minutes_pv %}{{ data['minutes_hits'][minute] }}, {% endfor %}],
+                markPoint: {
+                  data: [
+                    {type: 'max', name: '最大值'},
+                    {type: 'min', name: '最小值'}
+                  ]
+                },
+                markLine: {
+                  data: [
+                    {type: 'average', name: '平均值'}
+                  ]
+                }
+              }
+            ]
+          };
+
+          {% if second_line_flag %}
+            var secondChart = echarts.init(document.getElementById('secondChart'));
+
+            var secondOption = {
+              title: {
+                text: '每秒PV变化曲线图',
+                subtext: ''
+              },
+              tooltip: {
+                trigger: 'axis'
+              },
+              legend: {
+                data: ['每秒PV']
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  mark: {show: false},
+                  dataView: {show: false, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: false},
+                  saveAsImage: {show: true}
+                }
+              },
+              calculable: true,
+              xAxis: [
+                {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: [{% for second in seconds_pv %}'{{ second }}',{% endfor %}]
+                }
+              ],
+              yAxis: [
+                {
+                  type: 'value',
+                  axisLabel: {
+                    formatter: '{value}'
+                  }
+                }
+              ],
+              series: [
+                {
+                  name: 'PV',
+                  type: 'line',
+                  data: [{% for second in seconds_pv %}{{ data['second_hits'][second] }}, {% endfor %}],
+                  markPoint: {
+                    data: [
+                      {type: 'max', name: '最大值'},
+                      {type: 'min', name: '最小值'}
+                    ]
+                  },
+                  markLine: {
+                    data: [
+                      {type: 'average', name: '平均值'}
+                    ]
+                  }
+                }
+              ]
+            };
+            minuteChart.setOption(minuteOption);
+          {% endif %}
+
+          var methodChart = ec.init(document.getElementById('methodChart'), theme);
+
+          var methodOption = {
+            title: {
+              text: 'GET和POST请求比例',
+              subtext: ''
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            legend: {
+              data: ['数量', '占比%']
+            },
+            toolbox: {
+              show: true,
+              feature: {
+                mark: {show: false},
+                dataView: {show: false, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: false},
+                saveAsImage: {show: true}
+              }
+            },
+            calculable: true,
+            xAxis: [
+              {
+                type: 'value',
+                boundaryGap: [0, 0.01]
+              }
+            ],
+            yAxis: [
+              {
+                type: 'category',
+                data: ['GET', 'POST']
+              }
+            ],
+            series: [
+              {
+                name: '数量',
+                type: 'bar',
+                data: [{{ method_counts['get'] }}, {{ method_counts['post'] }}]
+              },
+              {
+                name: '占比%',
+                type: 'bar',
+                data: ['{{ method_counts['get_percentile'] }}', '{{ method_counts['post_percentile'] }}' ]
+              }
+            ]
+          };
+
+          hoursChart.setOption(hoursOption);
+          minuteChart.setOption(minuteOption);
+          methodChart.setOption(methodOption);
+        }
+    );
   </script>
+
 
   </body>
 {% endblock %}

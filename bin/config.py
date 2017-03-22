@@ -35,5 +35,6 @@ class Config:
             self.custom_keys.append(key)
 
         self.second_line_flag = int(all_config.get('common', 'second_line_flag'))
+        self.support_method = all_config.get('common', 'support_method').split(',')
 
 config = Config('../conf/config.ini')

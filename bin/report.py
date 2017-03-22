@@ -26,7 +26,8 @@ def generate_web_log_parser_report(data):
                                   second_line_flag=config.second_line_flag,
                                   hours_pv=hours_pv,
                                   minutes_pv=minutes_pv,
-                                  seconds_pv=seconds_pv)
+                                  seconds_pv=seconds_pv,
+                                  method_counts=data.get('method_counts'))
 
     html_file = '../result/report/'+data.get('source_file')+'.html'
     with open(html_file, 'w') as f:

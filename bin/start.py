@@ -24,6 +24,7 @@ class URLData:
         self.cost = []
         self.cost_time = {'p9': None, 'p8': None, 'p5': None, 'avg': None, 'variance': None}
 
+
 def parse_log_format():
     log_format_index = {}
     log_format_list = config.log_format.split()
@@ -86,12 +87,24 @@ def get_new_url(origin_url):
 
 
 def parse_log_file(target_file, log_format):
+    # 用户IP
     hosts = []
+    # 访问时间
     times = []
+    # 访问时间中的小时
     hours = []
+    # 访问时间中的分钟
     minutes = []
+    # 请求URL
     urls = []
+    # 请求响应时间
+    cost_times_list = []
+    # 请求方法计数器
+    method_counts = {'post': 0, 'post_percentile': 0, 'get': 0, 'get_percentile': 0}
+
     pattern = re.compile(config.log_pattern)
+
+    # 第一次读取整个文件，获取对应的请求时间、请求URL、请求方法、用户IP、请求响应时间等数据
     with open('../data/'+target_file, 'r') as f:
         for line in f:
             match = pattern.match(line)
@@ -103,37 +116,53 @@ def parse_log_file(target_file, log_format):
                 url = match.group(log_format.get('url_index')).split('?')[0]
             if is_ignore_url(url):
                 continue
-            hosts.append(match.group(log_format.get('host_index')).split(',')[0])
-            log_time = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(match.group(log_format.get('time_index')),
-                                                                        '%d/%b/%Y:%H:%M:%S'))
-            times.append(log_time)
-            hours.append(log_time.split(':')[0])
-            minutes.append(':'.join(log_time.split(':')[0:-1]))
+            if match.group(log_format.get('method_index')) not in config.support_method:
+                continue
             if not_static_file(url):
+                hosts.append(match.group(log_format.get('host_index')).split(',')[0])
+                log_time = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(match.group(log_format.get('time_index')),
+                                                                            '%d/%b/%Y:%H:%M:%S'))
+                times.append(log_time)
+                hours.append(log_time.split(':')[0])
+                minutes.append(':'.join(log_time.split(':')[0:-1]))
                 method = match.group(log_format.get('method_index'))
+                if method == 'POST':
+                    method_counts['post'] += 1
+                if method == 'GET':
+                    method_counts['get'] += 1
                 protocol = match.group(log_format.get('protocol_index'))
                 urls.append(method+' '+url+' '+protocol)
+                if 'cost_time_index' in log_format.keys():
+                    cost_times_list.append(float(match.group(log_format.get('cost_time_index'))))
 
+    # 计算PV、UV、平均请求数、GET/POST占比
     pv = len(times)
     uv = len(set(hosts))
     response_avg = int(pv/len(set(times)))
+    method_counts['post_percentile'] = int(method_counts['post']*100/pv)
+    method_counts['get_percentile'] = int(method_counts['get']*100/pv)
 
+    # 获取每小时、每分钟、每秒的请求数量
     hours_counter = Counter(hours)
     minutes_counter = Counter(minutes)
     times_counter = Counter(times)
 
+    # 获取每秒最大请求数及其请求时间
     response_most_common = times_counter.most_common(1)[0]
     response_peak = response_most_common[1]
     response_peak_time = response_most_common[0]
 
+    # 根据不同URL的PV数量截取较多请求，后续只分析进去排名内的URL
     urls_counter = Counter(urls)
     urls_most_common = urls_counter.most_common(config.urls_most_number)
 
+    # 计算请求占比
     url_data_list = []
     for item in urls_most_common:
         ratio = '%0.3f' % float(item[1]*100/float(pv))
         url_data_list.append(URLData(url=item[0], pv=item[1], ratio=ratio))
 
+    # 第二次读取文件，以获取特定请求的访问时间及响应时间
     with open('../data/'+target_file, 'r') as f:
         for line in f:
             match = pattern.match(line)
@@ -153,7 +182,10 @@ def parse_log_file(target_file, log_format):
                     break
 
     for url_data in url_data_list:
+        # 计算每个特定请求的每秒最大并发
         url_data.peak = Counter(url_data.time).most_common(1)[0][1]
+
+        # 计算每个特定请求的耗时均值，中值，方差，百分位等
         if url_data.cost:
             url_data.cost_time['avg'] = '%0.3f' % float(average(url_data.cost))
             url_data.cost_time['variance'] = int(var(url_data.cost))
@@ -161,10 +193,66 @@ def parse_log_file(target_file, log_format):
             url_data.cost_time['p8'] = '%0.3f' % percentile(url_data.cost, 80)
             url_data.cost_time['p5'] = '%0.3f' % percentile(url_data.cost, 50)
 
+    # 统计不同响应时间范围的请求数量
+    cost_time_range = {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0, 'r5': 0, 'r6': 0,
+                       'r7': 0, 'r8': 0, 'r9': 0, 'r10': 0, 'r11': 0}
+    for cost_time in cost_times_list:
+        if cost_time <= 0.05:
+            cost_time_range['r1'] += 1
+        elif 0.05 < cost_time <= 0.1:
+            cost_time_range['r2'] += 1
+        elif 0.1 < cost_time <= 0.15:
+            cost_time_range['r3'] += 1
+        elif 0.15 < cost_time <= 0.2:
+            cost_time_range['r4'] += 1
+        elif 0.2 < cost_time <= 0.25:
+            cost_time_range['r5'] += 1
+        elif 0.25 < cost_time <= 0.3:
+            cost_time_range['r6'] += 1
+        elif 0.3 < cost_time <= 0.35:
+            cost_time_range['r7'] += 1
+        elif 0.35 < cost_time <= 0.4:
+            cost_time_range['r8'] += 1
+        elif 0.4 < cost_time <= 0.45:
+            cost_time_range['r9'] += 1
+        elif 0.45 < cost_time <= 0.5:
+            cost_time_range['r10'] += 1
+        else:
+            cost_time_range['r11'] += 1
+
+    # 计算不同响应时间范围的请求占比
+    cost_time_range_percentile = {'r1p': 0, 'r2p': 0, 'r3p': 0, 'r4p': 0, 'r5p': 0, 'r6p': 0,
+                                  'r7p': 0, 'r8p': 0, 'r9p': 0, 'r10p': 0, 'r11p': 0}
+    if cost_times_list:
+        total_cost_time_pv = len(cost_times_list)
+        if cost_time_range['r1']:
+            cost_time_range_percentile['r1p'] = '%0.3f' % float(cost_time_range['r1']*100/total_cost_time_pv)
+        if cost_time_range['r2']:
+            cost_time_range_percentile['r2p'] = '%0.3f' % float(cost_time_range['r2']*100/total_cost_time_pv)
+        if cost_time_range['r3']:
+            cost_time_range_percentile['r3p'] = '%0.3f' % float(cost_time_range['r3']*100/total_cost_time_pv)
+        if cost_time_range['r4']:
+            cost_time_range_percentile['r4p'] = '%0.3f' % float(cost_time_range['r4']*100/total_cost_time_pv)
+        if cost_time_range['r5']:
+            cost_time_range_percentile['r5p'] = '%0.3f' % float(cost_time_range['r5']*100/total_cost_time_pv)
+        if cost_time_range['r6']:
+            cost_time_range_percentile['r6p'] = '%0.3f' % float(cost_time_range['r6']*100/total_cost_time_pv)
+        if cost_time_range['r7']:
+            cost_time_range_percentile['r7p'] = '%0.3f' % float(cost_time_range['r7']*100/total_cost_time_pv)
+        if cost_time_range['r8']:
+            cost_time_range_percentile['r8p'] = '%0.3f' % float(cost_time_range['r8']*100/total_cost_time_pv)
+        if cost_time_range['r9']:
+            cost_time_range_percentile['r9p'] = '%0.3f' % float(cost_time_range['r9']*100/total_cost_time_pv)
+        if cost_time_range['r10']:
+            cost_time_range_percentile['r10p'] = '%0.3f' % float(cost_time_range['r10']*100/total_cost_time_pv)
+        if cost_time_range['r11']:
+            cost_time_range_percentile['r11p'] = '%0.3f' % float(cost_time_range['r11']*100/total_cost_time_pv)
+
     total_data = {'pv': pv, 'uv': uv, 'response_avg': response_avg, 'response_peak': response_peak,
                   'response_peak_time': response_peak_time, 'url_data_list': url_data_list,
                   'source_file': target_file, 'hours_hits': hours_counter, 'minutes_hits': minutes_counter,
-                  'second_hits': times_counter}
+                  'second_hits': times_counter, 'cost_times_list': cost_times_list,
+                  'cost_time_range_percentile': cost_time_range_percentile, 'method_counts': method_counts}
     generate_web_log_parser_report(total_data)
 
     total_data = {'source_file': target_file, 'urls': urls_counter}
