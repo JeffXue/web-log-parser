@@ -27,7 +27,11 @@ def generate_web_log_parser_report(data):
                                   hours_pv=hours_pv,
                                   minutes_pv=minutes_pv,
                                   seconds_pv=seconds_pv,
-                                  method_counts=data.get('method_counts'))
+                                  method_counts=data.get('method_counts'),
+                                  cost_time_range_percentile=data.get('cost_time_range_percentile'),
+                                  cost_times_list=data.get('cost_times_list'),
+                                  cost_times_flag=data.get('cost_times_flag')
+                                  )
 
     html_file = '../result/report/'+data.get('source_file')+'.html'
     with open(html_file, 'w') as f:

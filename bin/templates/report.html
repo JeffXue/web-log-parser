@@ -59,19 +59,19 @@
       {% endif %}
     </table>
 
-    <br>
-
-    <table class="bordered">
-      <tr>
-        <td>
-          <div id="costPChart" style="height:400px; width: 670px;"></div>
-        </td>
-        <td>
-          <div id="costChart" style="height:400px; width: 670px;"></div>
-        </td>
-      </tr>
-    </table>
-
+    {% if cost_times_flag %}
+      <br>
+      <table class="bordered">
+        <tr>
+          <td>
+            <div id="costPChart" style="height:400px; width: 670px;"></div>
+          </td>
+          <td>
+            <div id="costChart" style="height:400px; width: 670px;"></div>
+          </td>
+        </tr>
+      </table>
+    {% endif %}
 
     <br>
 
@@ -131,255 +131,401 @@
   <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
 
   <script type="text/javascript">
-    require.config({
-      paths: {
-        echarts: 'http://echarts.baidu.com/build/dist'
-      }
-    });
+      require.config({
+          paths: {
+              echarts: 'http://echarts.baidu.com/build/dist'
+          }
+      });
 
-    require(
-        [
-          'echarts',
-          'echarts/theme/macarons',
-          'echarts/chart/bar',
-          'echarts/chart/line'
-        ],
-        function (ec, theme) {
-          var hoursChart = ec.init(document.getElementById('hoursChart'), theme);
+      require(
+          [
+              'echarts',
+              'echarts/theme/macarons',
+              'echarts/chart/bar',
+              'echarts/chart/line'
+          ],
+          function (ec, theme) {
+              var hoursChart = ec.init(document.getElementById('hoursChart'), theme);
 
-          var hoursOption = {
-            title: {
-              text: '每小时PV变化曲线图',
-              subtext: ''
-            },
-            tooltip: {
-              trigger: 'axis'
-            },
-            legend: {
-              data: ['每小时PV']
-            },
-            toolbox: {
-              show: true,
-              feature: {
-                mark: {show: false},
-                dataView: {show: false, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: false},
-                saveAsImage: {show: true}
-              }
-            },
-            calculable: true,
-            xAxis: [
-              {
-                type: 'category',
-                boundaryGap: false,
-                data: [{% for hour in hours_pv %}'{{ hour }}:00',{% endfor %}]
-              }
-            ],
-            yAxis: [
-              {
-                type: 'value',
-                axisLabel: {
-                  formatter: '{value}'
-                }
-              }
-            ],
-            series: [
-              {
-                name: 'PV',
-                type: 'line',
-                data: [{% for hour in hours_pv %}{{ data['hours_hits'][hour] }}, {% endfor %}],
-                markPoint: {
-                  data: [
-                    {type: 'max', name: '最大值'},
-                    {type: 'min', name: '最小值'}
-                  ]
-                },
-                markLine: {
-                  data: [
-                    {type: 'average', name: '平均值'}
-                  ]
-                }
-              }
-            ]
-          };
-
-          var minuteChart = ec.init(document.getElementById('minutesChart'), theme);
-
-          var minuteOption = {
-            title: {
-              text: '每分钟PV变化曲线图',
-              subtext: ''
-            },
-            tooltip: {
-              trigger: 'axis'
-            },
-            legend: {
-              data: ['每分钟PV']
-            },
-            toolbox: {
-              show: true,
-              feature: {
-                mark: {show: false},
-                dataView: {show: false, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: false},
-                saveAsImage: {show: true}
-              }
-            },
-            calculable: true,
-            xAxis: [
-              {
-                type: 'category',
-                boundaryGap: false,
-                data: [{% for minute in minutes_pv %}'{{ minute }}',{% endfor %}]
-              }
-            ],
-            yAxis: [
-              {
-                type: 'value',
-                axisLabel: {
-                  formatter: '{value}'
-                }
-              }
-            ],
-            series: [
-              {
-                name: 'PV',
-                type: 'line',
-                data: [{% for minute in minutes_pv %}{{ data['minutes_hits'][minute] }}, {% endfor %}],
-                markPoint: {
-                  data: [
-                    {type: 'max', name: '最大值'},
-                    {type: 'min', name: '最小值'}
-                  ]
-                },
-                markLine: {
-                  data: [
-                    {type: 'average', name: '平均值'}
-                  ]
-                }
-              }
-            ]
-          };
-
-          {% if second_line_flag %}
-            var secondChart = echarts.init(document.getElementById('secondChart'));
-
-            var secondOption = {
-              title: {
-                text: '每秒PV变化曲线图',
-                subtext: ''
-              },
-              tooltip: {
-                trigger: 'axis'
-              },
-              legend: {
-                data: ['每秒PV']
-              },
-              toolbox: {
-                show: true,
-                feature: {
-                  mark: {show: false},
-                  dataView: {show: false, readOnly: false},
-                  magicType: {show: true, type: ['line', 'bar']},
-                  restore: {show: false},
-                  saveAsImage: {show: true}
-                }
-              },
-              calculable: true,
-              xAxis: [
-                {
-                  type: 'category',
-                  boundaryGap: false,
-                  data: [{% for second in seconds_pv %}'{{ second }}',{% endfor %}]
-                }
-              ],
-              yAxis: [
-                {
-                  type: 'value',
-                  axisLabel: {
-                    formatter: '{value}'
-                  }
-                }
-              ],
-              series: [
-                {
-                  name: 'PV',
-                  type: 'line',
-                  data: [{% for second in seconds_pv %}{{ data['second_hits'][second] }}, {% endfor %}],
-                  markPoint: {
-                    data: [
-                      {type: 'max', name: '最大值'},
-                      {type: 'min', name: '最小值'}
-                    ]
+              var hoursOption = {
+                  title: {
+                      text: '每小时PV变化曲线图',
+                      subtext: ''
                   },
-                  markLine: {
-                    data: [
-                      {type: 'average', name: '平均值'}
-                    ]
-                  }
-                }
-              ]
-            };
-            minuteChart.setOption(minuteOption);
-          {% endif %}
+                  tooltip: {
+                      trigger: 'axis'
+                  },
+                  legend: {
+                      data: ['每小时PV']
+                  },
+                  toolbox: {
+                      show: true,
+                      feature: {
+                          mark: {show: false},
+                          dataView: {show: false, readOnly: false},
+                          magicType: {show: true, type: ['line', 'bar']},
+                          restore: {show: false},
+                          saveAsImage: {show: true}
+                      }
+                  },
+                  calculable: true,
+                  xAxis: [
+                      {
+                          type: 'category',
+                          boundaryGap: false,
+                          data: [{% for hour in hours_pv %}'{{ hour }}:00',{% endfor %}]
+                      }
+                  ],
+                  yAxis: [
+                      {
+                          type: 'value',
+                          axisLabel: {
+                              formatter: '{value}'
+                          }
+                      }
+                  ],
+                  series: [
+                      {
+                          name: 'PV',
+                          type: 'line',
+                          data: [{% for hour in hours_pv %}{{ data['hours_hits'][hour] }}, {% endfor %}],
+                          markPoint: {
+                              data: [
+                                  {type: 'max', name: '最大值'},
+                                  {type: 'min', name: '最小值'}
+                              ]
+                          },
+                          markLine: {
+                              data: [
+                                  {type: 'average', name: '平均值'}
+                              ]
+                          }
+                      }
+                  ]
+              };
 
-          var methodChart = ec.init(document.getElementById('methodChart'), theme);
+              var minuteChart = ec.init(document.getElementById('minutesChart'), theme);
 
-          var methodOption = {
-            title: {
-              text: 'GET和POST请求比例',
-              subtext: ''
-            },
-            tooltip: {
-              trigger: 'axis'
-            },
-            legend: {
-              data: ['数量', '占比%']
-            },
-            toolbox: {
-              show: true,
-              feature: {
-                mark: {show: false},
-                dataView: {show: false, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: false},
-                saveAsImage: {show: true}
-              }
-            },
-            calculable: true,
-            xAxis: [
-              {
-                type: 'value',
-                boundaryGap: [0, 0.01]
-              }
-            ],
-            yAxis: [
-              {
-                type: 'category',
-                data: ['GET', 'POST']
-              }
-            ],
-            series: [
-              {
-                name: '数量',
-                type: 'bar',
-                data: [{{ method_counts['get'] }}, {{ method_counts['post'] }}]
-              },
-              {
-                name: '占比%',
-                type: 'bar',
-                data: ['{{ method_counts['get_percentile'] }}', '{{ method_counts['post_percentile'] }}' ]
-              }
-            ]
-          };
+              var minuteOption = {
+                  title: {
+                      text: '每分钟PV变化曲线图',
+                      subtext: ''
+                  },
+                  tooltip: {
+                      trigger: 'axis'
+                  },
+                  legend: {
+                      data: ['每分钟PV']
+                  },
+                  toolbox: {
+                      show: true,
+                      feature: {
+                          mark: {show: false},
+                          dataView: {show: false, readOnly: false},
+                          magicType: {show: true, type: ['line', 'bar']},
+                          restore: {show: false},
+                          saveAsImage: {show: true}
+                      }
+                  },
+                  calculable: true,
+                  xAxis: [
+                      {
+                          type: 'category',
+                          boundaryGap: false,
+                          data: [{% for minute in minutes_pv %}'{{ minute }}',{% endfor %}]
+                      }
+                  ],
+                  yAxis: [
+                      {
+                          type: 'value',
+                          axisLabel: {
+                              formatter: '{value}'
+                          }
+                      }
+                  ],
+                  series: [
+                      {
+                          name: 'PV',
+                          type: 'line',
+                          data: [{% for minute in minutes_pv %}{{ data['minutes_hits'][minute] }}, {% endfor %}],
+                          markPoint: {
+                              data: [
+                                  {type: 'max', name: '最大值'},
+                                  {type: 'min', name: '最小值'}
+                              ]
+                          },
+                          markLine: {
+                              data: [
+                                  {type: 'average', name: '平均值'}
+                              ]
+                          }
+                      }
+                  ]
+              };
 
-          hoursChart.setOption(hoursOption);
-          minuteChart.setOption(minuteOption);
-          methodChart.setOption(methodOption);
-        }
-    );
+              {% if second_line_flag %}
+                  var secondChart = echarts.init(document.getElementById('secondChart'));
+
+                  var secondOption = {
+                      title: {
+                          text: '每秒PV变化曲线图',
+                          subtext: ''
+                      },
+                      tooltip: {
+                          trigger: 'axis'
+                      },
+                      legend: {
+                          data: ['每秒PV']
+                      },
+                      toolbox: {
+                          show: true,
+                          feature: {
+                              mark: {show: false},
+                              dataView: {show: false, readOnly: false},
+                              magicType: {show: true, type: ['line', 'bar']},
+                              restore: {show: false},
+                              saveAsImage: {show: true}
+                          }
+                      },
+                      calculable: true,
+                      xAxis: [
+                          {
+                              type: 'category',
+                              boundaryGap: false,
+                              data: [{% for second in seconds_pv %}'{{ second }}',{% endfor %}]
+                          }
+                      ],
+                      yAxis: [
+                          {
+                              type: 'value',
+                              axisLabel: {
+                                  formatter: '{value}'
+                              }
+                          }
+                      ],
+                      series: [
+                          {
+                              name: 'PV',
+                              type: 'line',
+                              data: [{% for second in seconds_pv %}{{ data['second_hits'][second] }}, {% endfor %}],
+                              markPoint: {
+                                  data: [
+                                      {type: 'max', name: '最大值'},
+                                      {type: 'min', name: '最小值'}
+                                  ]
+                              },
+                              markLine: {
+                                  data: [
+                                      {type: 'average', name: '平均值'}
+                                  ]
+                              }
+                          }
+                      ]
+                  };
+                  minuteChart.setOption(minuteOption);
+              {% endif %}
+
+              var methodChart = ec.init(document.getElementById('methodChart'), theme);
+
+              var methodOption = {
+                  title: {
+                      text: 'GET和POST请求比例',
+                      subtext: ''
+                  },
+                  tooltip: {
+                      trigger: 'axis'
+                  },
+                  legend: {
+                      data: ['数量', '占比%']
+                  },
+                  toolbox: {
+                      show: true,
+                      feature: {
+                          mark: {show: false},
+                          dataView: {show: false, readOnly: false},
+                          magicType: {show: true, type: ['line', 'bar']},
+                          restore: {show: false},
+                          saveAsImage: {show: true}
+                      }
+                  },
+                  calculable: true,
+                  xAxis: [
+                      {
+                          type: 'value',
+                          boundaryGap: [0, 0.01]
+                      }
+                  ],
+                  yAxis: [
+                      {
+                          type: 'category',
+                          data: ['GET', 'POST']
+                      }
+                  ],
+                  series: [
+                      {
+                          name: '数量',
+                          type: 'bar',
+                          data: [{{ method_counts['get'] }}, {{ method_counts['post'] }}]
+                      },
+                      {
+                          name: '占比%',
+                          type: 'bar',
+                          data: ['{{ method_counts['get_percentile'] }}', '{{ method_counts['post_percentile'] }}']
+                      }
+                  ]
+              };
+
+              {% if cost_times_flag %}
+                  var costPChart = ec.init(document.getElementById('costPChart'), theme);
+                  var costChart = ec.init(document.getElementById('costChart'), theme);
+
+                  var costPOption = {
+                      title: {
+                          text: '响应时间区间占比',
+                          subtext: ''
+                      },
+                      tooltip: {
+                          trigger: 'axis'
+                      },
+                      legend: {
+                          data: ['占比%']
+                      },
+                      toolbox: {
+                          show: true,
+                          feature: {
+                              mark: {show: false},
+                              dataView: {show: false, readOnly: false},
+                              magicType: {show: true, type: ['line', 'bar']},
+                              restore: {show: false},
+                              saveAsImage: {show: true}
+                          }
+                      },
+                      calculable: true,
+                      xAxis: [
+                          {
+                              type: 'category',
+                              data: ['<50ms', '50~100ms', '100~150ms', '150~200ms', '200~250ms', '250~300ms', '300ms~350ms',
+                                  '350~400ms', '400~450ms', '450~500ms', '>500ms']
+                          }
+                      ],
+                      yAxis: [
+                          {
+                              type: 'value',
+                              axisLabel: {
+                                  formatter: '{value} %'
+                              }
+                          }
+                      ],
+                      series: [
+                          {
+                              name: '占比',
+                              type: 'bar',
+                              data: [{{ cost_time_range_percentile['r1p'] }},
+                                  {{ cost_time_range_percentile['r2p'] }},
+                                  {{ cost_time_range_percentile['r3p'] }},
+                                  {{ cost_time_range_percentile['r4p'] }},
+                                  {{ cost_time_range_percentile['r5p'] }},
+                                  {{ cost_time_range_percentile['r6p'] }},
+                                  {{ cost_time_range_percentile['r7p'] }},
+                                  {{ cost_time_range_percentile['r8p'] }},
+                                  {{ cost_time_range_percentile['r9p'] }},
+                                  {{ cost_time_range_percentile['r10p'] }},
+                                  {{ cost_time_range_percentile['r11p'] }}],
+                              markPoint: {
+                                  data: [
+                                      {type: 'max', name: '最大值'},
+                                      {type: 'min', name: '最小值'}
+                                  ]
+                              },
+                              markLine: {
+                                  data: [
+                                      {type: 'average', name: '平均值'}
+                                  ]
+                              }
+                          }
+                      ]
+                  };
+
+
+                  var costOption = {
+                      title: {
+                          text: '响应时间分布图',
+                          subtext: ''
+                      },
+                      tooltip: {
+                          trigger: 'axis',
+                          showDelay: 0,
+                          formatter: function (params) {
+                              return params.seriesName + ' : ' + params.value[0] + '秒 ';
+                          },
+                          axisPointer: {
+                              show: true,
+                              type: 'cross',
+                              lineStyle: {
+                                  type: 'dashed',
+                                  width: 1
+                              }
+                          }
+                      },
+                      legend: {
+                          data: ['响应时间']
+                      },
+                      toolbox: {
+                          show: true,
+                          feature: {
+                              mark: {show: true},
+                              dataZoom: {show: true},
+                              dataView: {show: true, readOnly: false},
+                              restore: {show: true},
+                              saveAsImage: {show: true}
+                          }
+                      },
+                      xAxis: [
+                          {
+                              type: 'value',
+                              scale: true,
+                              axisLabel: {
+                                  formatter: ''
+                              }
+                          }
+                      ],
+                      yAxis: [
+                          {
+                              type: 'value',
+                              scale: true,
+                              axisLabel: {
+                                  formatter: '{value} 秒'
+                              }
+                          }
+                      ],
+                      series: [
+                          {
+                              name: '响应时间',
+                              type: 'scatter',
+                              data: [{% for cost_time in cost_times_list %}[{{ cost_time }}, {{ cost_time }}], {{ endfor }}],
+                              markPoint: {
+                                  data: [
+                                      {type: 'max', name: '最大值'},
+                                      {type: 'min', name: '最小值'}
+                                  ]
+                              },
+                              markLine: {
+                                  data: [
+                                      {type: 'average', name: '平均值'}
+                                  ]
+                              }
+                          }
+                      ]
+                  };
+                  costPChart.setOption(costPOption);
+                  costChart.setOption(costOption);
+
+              {% endif %}
+              hoursChart.setOption(hoursOption);
+              minuteChart.setOption(minuteOption);
+              methodChart.setOption(methodOption);
+          }
+      );
   </script>
 
 

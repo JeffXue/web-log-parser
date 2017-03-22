@@ -99,6 +99,10 @@ def parse_log_file(target_file, log_format):
     urls = []
     # 请求响应时间
     cost_times_list = []
+    if 'cost_time_index' in log_format.keys():
+        cost_times_flag = True
+    else:
+        cost_times_flag = False
     # 请求方法计数器
     method_counts = {'post': 0, 'post_percentile': 0, 'get': 0, 'get_percentile': 0}
 
@@ -251,7 +255,7 @@ def parse_log_file(target_file, log_format):
     total_data = {'pv': pv, 'uv': uv, 'response_avg': response_avg, 'response_peak': response_peak,
                   'response_peak_time': response_peak_time, 'url_data_list': url_data_list,
                   'source_file': target_file, 'hours_hits': hours_counter, 'minutes_hits': minutes_counter,
-                  'second_hits': times_counter, 'cost_times_list': cost_times_list,
+                  'second_hits': times_counter, 'cost_times_list': cost_times_list, 'cost_times_flag': cost_times_flag,
                   'cost_time_range_percentile': cost_time_range_percentile, 'method_counts': method_counts}
     generate_web_log_parser_report(total_data)
 
