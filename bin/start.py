@@ -98,11 +98,15 @@ def parse_log_file(target_file, log_format):
     # 请求URL
     urls = []
     # 请求响应时间
-    cost_times_list = []
-    if 'cost_time_index' in log_format.keys() and config.cost_time_flag:
-        cost_times_flag = True
-    else:
-        cost_times_flag = False
+    cost_time_list = []
+    cost_time_flag = False
+    cost_time_percentile_flag = False
+    if 'cost_time_index' in log_format.keys():
+        if config.cost_time_flag:
+            cost_time_flag = True
+        if config.cost_time_percentile_flag:
+            cost_time_percentile_flag = True
+
     # 请求方法计数器
     method_counts = {'post': 0, 'post_percentile': 0, 'get': 0, 'get_percentile': 0}
 
@@ -136,8 +140,8 @@ def parse_log_file(target_file, log_format):
                     method_counts['get'] += 1
                 protocol = match.group(log_format.get('protocol_index'))
                 urls.append(method+' '+url+' '+protocol)
-                if cost_times_flag:
-                    cost_times_list.append({'time': log_time, 'cost_time': int(float(match.group(log_format.get('cost_time_index')))*1000)})
+                if 'cost_time_index' in log_format.keys():
+                    cost_time_list.append({'time': log_time, 'cost_time': int(float(match.group(log_format.get('cost_time_index')))*1000)})
 
     # 计算PV、UV、平均请求数、GET/POST占比
     pv = len(times)
@@ -200,7 +204,7 @@ def parse_log_file(target_file, log_format):
     # 统计不同响应时间范围的请求数量
     cost_time_range = {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0, 'r5': 0, 'r6': 0,
                        'r7': 0, 'r8': 0, 'r9': 0, 'r10': 0, 'r11': 0}
-    for cost_time in cost_times_list:
+    for cost_time in cost_time_list:
         if cost_time['cost_time'] <= 50:
             cost_time_range['r1'] += 1
         elif 50 < cost_time['cost_time'] <= 100:
@@ -223,12 +227,11 @@ def parse_log_file(target_file, log_format):
             cost_time_range['r10'] += 1
         else:
             cost_time_range['r11'] += 1
-
     # 计算不同响应时间范围的请求占比
     cost_time_range_percentile = {'r1p': 0, 'r2p': 0, 'r3p': 0, 'r4p': 0, 'r5p': 0, 'r6p': 0,
                                   'r7p': 0, 'r8p': 0, 'r9p': 0, 'r10p': 0, 'r11p': 0}
-    if cost_times_list:
-        total_cost_time_pv = float(len(cost_times_list))
+    if cost_time_list:
+        total_cost_time_pv = float(len(cost_time_list))
         if cost_time_range['r1']:
             cost_time_range_percentile['r1p'] = '%0.3f' % float(cost_time_range['r1']*100/total_cost_time_pv)
         if cost_time_range['r2']:
@@ -255,8 +258,9 @@ def parse_log_file(target_file, log_format):
     total_data = {'pv': pv, 'uv': uv, 'response_avg': response_avg, 'response_peak': response_peak,
                   'response_peak_time': response_peak_time, 'url_data_list': url_data_list,
                   'source_file': target_file, 'hours_hits': hours_counter, 'minutes_hits': minutes_counter,
-                  'second_hits': times_counter, 'cost_times_list': cost_times_list, 'cost_times_flag': cost_times_flag,
-                  'cost_time_range_percentile': cost_time_range_percentile, 'method_counts': method_counts}
+                  'second_hits': times_counter, 'cost_time_list': cost_time_list, 'cost_time_flag': cost_time_flag,
+                  'cost_time_range_percentile': cost_time_range_percentile, 'method_counts': method_counts,
+                  'cost_time_percentile_flag': cost_time_percentile_flag}
     generate_web_log_parser_report(total_data)
 
     total_data = {'source_file': target_file, 'urls': urls_counter}

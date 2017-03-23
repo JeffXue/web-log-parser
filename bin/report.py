@@ -29,8 +29,9 @@ def generate_web_log_parser_report(data):
                                   seconds_pv=seconds_pv,
                                   method_counts=data.get('method_counts'),
                                   cost_time_range_percentile=data.get('cost_time_range_percentile'),
-                                  cost_times_list=data.get('cost_times_list'),
-                                  cost_times_flag=data.get('cost_times_flag')
+                                  cost_time_list=data.get('cost_time_list'),
+                                  cost_time_flag=data.get('cost_time_flag'),
+                                  cost_time_percentile_flag=data.get('cost_time_percentile_flag')
                                   )
 
     html_file = '../result/report/'+data.get('source_file')+'.html'

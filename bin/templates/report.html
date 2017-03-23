@@ -59,15 +59,23 @@
       {% endif %}
     </table>
 
-    {% if cost_times_flag %}
+    {% if cost_time_percentile_flag %}
       <br>
       <table class="bordered">
         <tr>
           <td>
-            <div id="costPChart" style="height:400px; width: 670px;"></div>
+            <div id="costPChart" style="height:400px"></div>
           </td>
+        </tr>
+      </table>
+    {% endif %}
+
+    {% if cost_time_flag %}
+      <br>
+      <table class="bordered">
+        <tr>
           <td>
-            <div id="costChart" style="height:400px; width: 670px;"></div>
+            <div id="costChart" style="height:400px"></div>
           </td>
         </tr>
       </table>
@@ -204,6 +212,7 @@
               }
             ]
           };
+          hoursChart.setOption(hoursOption);
 
           var minuteChart = ec.init(document.getElementById('minutesChart'), theme);
 
@@ -263,6 +272,7 @@
               }
             ]
           };
+          minuteChart.setOption(minuteOption);
 
           {% if second_line_flag %}
             var secondChart = ec.init(document.getElementById('secondChart'), theme);
@@ -375,10 +385,11 @@
               }
             ]
           };
+          methodChart.setOption(methodOption);
 
-          {% if cost_times_flag %}
+
+          {% if cost_time_percentile_flag %}
             var costPChart = ec.init(document.getElementById('costPChart'), theme);
-            var costChart = ec.init(document.getElementById('costChart'), theme);
 
             var costPOption = {
               title: {
@@ -446,7 +457,11 @@
                 }
               ]
             };
+            costPChart.setOption(costPOption);
+          {% endif %}
 
+          {% if cost_time_flag %}
+            var costChart = ec.init(document.getElementById('costChart'), theme);
             var costOption = {
               title: {
                 text: '响应时间分布图(时间维度)',
@@ -519,18 +534,13 @@
                       }
                     }
                   },
-                  data: [{% for cost_time in cost_times_list %}[new Date('{{ cost_time['time'] }}'), {{ cost_time['cost_time'] }}],{% endfor %}],
+                  data: [{% for cost_time in cost_time_list %}[new Date('{{ cost_time['time'] }}'), {{ cost_time['cost_time'] }}],{% endfor %}],
                 }
               ]
             };
-
-            costPChart.setOption(costPOption);
             costChart.setOption(costOption);
           {% endif %}
 
-          hoursChart.setOption(hoursOption);
-          minuteChart.setOption(minuteOption);
-          methodChart.setOption(methodOption);
         }
     );
   </script>
