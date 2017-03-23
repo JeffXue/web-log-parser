@@ -21,7 +21,14 @@
 
 ### format
 - log-pattern 解析日志的正则表达式
-- log-format 日志内容格式，用于本工具，每项对应log-pattern匹配项
+- log-format 日志内容格式，用于本工具，每项对应log-pattern匹配项，默认支持统计以下配置项：
+    - ip：用户IP
+    - real_ip：用户真实IP，若配置了该项将忽略ip的统计，而使用real_ip进行统计
+    - datetime：请求访问时间
+    - url：请求url
+    - method：请求方法
+    - protocol：请求协议
+    - cost： 请求耗时
 
 ### filter
 - support_method 支持的URL Method，否则不进行统计
