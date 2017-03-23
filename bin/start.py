@@ -99,7 +99,7 @@ def parse_log_file(target_file, log_format):
     urls = []
     # 请求响应时间
     cost_times_list = []
-    if 'cost_time_index' in log_format.keys():
+    if 'cost_time_index' in log_format.keys() and config.cost_time_flag:
         cost_times_flag = True
     else:
         cost_times_flag = False
@@ -136,8 +136,8 @@ def parse_log_file(target_file, log_format):
                     method_counts['get'] += 1
                 protocol = match.group(log_format.get('protocol_index'))
                 urls.append(method+' '+url+' '+protocol)
-                if 'cost_time_index' in log_format.keys():
-                    cost_times_list.append(float(match.group(log_format.get('cost_time_index'))))
+                if cost_times_flag:
+                    cost_times_list.append({'time': log_time, 'cost_time': int(float(match.group(log_format.get('cost_time_index')))*1000)})
 
     # 计算PV、UV、平均请求数、GET/POST占比
     pv = len(times)
@@ -201,25 +201,25 @@ def parse_log_file(target_file, log_format):
     cost_time_range = {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0, 'r5': 0, 'r6': 0,
                        'r7': 0, 'r8': 0, 'r9': 0, 'r10': 0, 'r11': 0}
     for cost_time in cost_times_list:
-        if cost_time <= 0.05:
+        if cost_time['cost_time'] <= 50:
             cost_time_range['r1'] += 1
-        elif 0.05 < cost_time <= 0.1:
+        elif 50 < cost_time['cost_time'] <= 100:
             cost_time_range['r2'] += 1
-        elif 0.1 < cost_time <= 0.15:
+        elif 100 < cost_time['cost_time'] <= 150:
             cost_time_range['r3'] += 1
-        elif 0.15 < cost_time <= 0.2:
+        elif 150 < cost_time['cost_time'] <= 200:
             cost_time_range['r4'] += 1
-        elif 0.2 < cost_time <= 0.25:
+        elif 200 < cost_time['cost_time'] <= 250:
             cost_time_range['r5'] += 1
-        elif 0.25 < cost_time <= 0.3:
+        elif 250 < cost_time['cost_time'] <= 300:
             cost_time_range['r6'] += 1
-        elif 0.3 < cost_time <= 0.35:
+        elif 300 < cost_time['cost_time'] <= 350:
             cost_time_range['r7'] += 1
-        elif 0.35 < cost_time <= 0.4:
+        elif 350 < cost_time['cost_time'] <= 400:
             cost_time_range['r8'] += 1
-        elif 0.4 < cost_time <= 0.45:
+        elif 400 < cost_time['cost_time'] <= 450:
             cost_time_range['r9'] += 1
-        elif 0.45 < cost_time <= 0.5:
+        elif 450 < cost_time['cost_time'] <= 500:
             cost_time_range['r10'] += 1
         else:
             cost_time_range['r11'] += 1
