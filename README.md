@@ -4,7 +4,7 @@
 ---
 
 ## 样例
-![样例图片](https://raw.githubusercontent.com/JeffXue/web-log-parser/master/web-log-parser-report-example.png)
+![样例图片](https://raw.githubusercontent.com/JeffXue/web-log-parser/master/example.png)
 
 ---
 
