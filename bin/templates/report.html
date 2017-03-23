@@ -519,11 +519,7 @@
                       }
                     }
                   },
-                  data: (function () {
-                    var d = [];
-                    {% for cost_time in cost_times_list %}d.push([new Date('{{ cost_time['time'] }}'), {{ cost_time['cost_time'] }}]);{% endfor %}
-                    return d;
-                  })()
+                  data: [{% for cost_time in cost_times_list %}[new Date('{{ cost_time['time'] }}'), {{ cost_time['cost_time'] }}],{% endfor %}],
                 }
               ]
             };
