@@ -228,7 +228,7 @@ def parse_log_file(target_file, log_format):
     cost_time_range_percentile = {'r1p': 0, 'r2p': 0, 'r3p': 0, 'r4p': 0, 'r5p': 0, 'r6p': 0,
                                   'r7p': 0, 'r8p': 0, 'r9p': 0, 'r10p': 0, 'r11p': 0}
     if cost_times_list:
-        total_cost_time_pv = len(cost_times_list)
+        total_cost_time_pv = float(len(cost_times_list))
         if cost_time_range['r1']:
             cost_time_range_percentile['r1p'] = '%0.3f' % float(cost_time_range['r1']*100/total_cost_time_pv)
         if cost_time_range['r2']:
