@@ -11,7 +11,7 @@ url_template = env.get_template('url.html')
 
 def generate_web_log_parser_report(data):
     if config.goaccess_flag:
-        data.setdefault('goaccess_file', data.get('source_file')+'_GoAccess.html')
+        data.setdefault('goaccess_file', data.get('source_file') + '_GoAccess.html')
         data.setdefault('goaccess_title', u'查看GoAccess生成报告')
     else:
         data.setdefault('goaccess_file', '#')
@@ -22,7 +22,7 @@ def generate_web_log_parser_report(data):
     seconds_pv = sorted(list(data.get('second_hits')))
 
     html = report_template.render(data=data,
-                                  web_log_urls_file=data.get('source_file')+'_urls.html',
+                                  web_log_urls_file=data.get('source_file') + '_urls.html',
                                   second_line_flag=config.second_line_flag,
                                   hours_pv=hours_pv,
                                   minutes_pv=minutes_pv,
@@ -31,20 +31,19 @@ def generate_web_log_parser_report(data):
                                   cost_time_range_percentile=data.get('cost_time_range_percentile'),
                                   cost_time_list=data.get('cost_time_list'),
                                   cost_time_flag=data.get('cost_time_flag'),
-                                  cost_time_percentile_flag=data.get('cost_time_percentile_flag')
-                                  )
+                                  cost_time_percentile_flag=data.get('cost_time_percentile_flag'),
+                                  cost_time_threshold=data.get('cost_time_threshold'))
 
-    html_file = '../result/report/'+data.get('source_file')+'.html'
+    html_file = '../result/report/' + data.get('source_file') + '.html'
     with open(html_file, 'w') as f:
         f.write(html.encode('utf-8'))
 
 
 def generate_web_log_parser_urls(data):
-
     html = url_template.render(data=data,
                                url_datas=sorted(data.get('urls')))
 
-    html_file = '../result/urls/'+data.get('source_file')+'_urls.html'
+    html_file = '../result/urls/' + data.get('source_file') + '_urls.html'
     with open(html_file, 'w') as f:
         f.write(html.encode('utf-8'))
 
@@ -54,4 +53,3 @@ def update_index_html():
 
     with open('../result/index.html', 'w') as f:
         f.write(html.encode('utf-8'))
-

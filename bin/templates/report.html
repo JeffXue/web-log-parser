@@ -115,22 +115,35 @@
       {% endif %}
 
       {% for url_data in data['url_data_list'] %}
-        <tr>
-          <td colspan="6">
-            <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
-          </td>
-          <td><strong>{{ url_data.pv }}</strong></td>
-          <td><strong>{{ url_data.ratio }}%</strong></td>
-          <td><strong>{{ url_data.peak }}</strong></td>
-          <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
-          <td><strong>{{ url_data.url.split()[2].replace('"', '') }}</strong></td>
-          {% if url_data.cost %}
+        {% if url_data.cost %}
+          {% if url_data.cost_time['avg'] >= cost_time_threshold %}
+          <tr style="color: red">
+            {% else %}
+          <tr>
+          {% endif %}
+            <td colspan="6"><strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong></td>
+            <td><strong>{{ url_data.pv }}</strong></td>
+            <td><strong>{{ url_data.ratio }}%</strong></td>
+            <td><strong>{{ url_data.peak }}</strong></td>
+            <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+            <td><strong>{{ url_data.url.split()[2].replace('"', '') }}</strong></td>
             <td><strong>{{ url_data.cost_time['avg'] }}</strong></td>
             <td><strong>{{ url_data.cost_time['p9'] }}</strong></td>
             <td><strong>{{ url_data.cost_time['p5'] }}</strong></td>
             <td><strong>{{ url_data.cost_time['variance'] }}</strong></td>
-          {% endif %}
-        </tr>
+            </tr>
+        {% else %}
+          <tr>
+            <td colspan="6">
+              <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
+            </td>
+            <td><strong>{{ url_data.pv }}</strong></td>
+            <td><strong>{{ url_data.ratio }}%</strong></td>
+            <td><strong>{{ url_data.peak }}</strong></td>
+            <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+            <td><strong>{{ url_data.url.split()[2].replace('"', '') }}</strong></td>
+          </tr>
+        {% endif %}
       {% endfor %}
 
     </table>
@@ -534,7 +547,8 @@
                       }
                     }
                   },
-                  data: [{% for cost_time in cost_time_list %}[new Date('{{ cost_time['time'] }}'), {{ cost_time['cost_time'] }}],{% endfor %}],
+                  data: [{% for cost_time in cost_time_list %}[
+                    new Date('{{ cost_time['time'] }}'), {{ cost_time['cost_time'] }}],{% endfor %}],
                 }
               ]
             };

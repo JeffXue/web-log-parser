@@ -34,6 +34,7 @@ class Config:
         self.second_line_flag = int(all_config.get('report', 'second_line_flag'))
         self.cost_time_flag = int(all_config.get('report', 'cost_time_flag'))
         self.cost_time_percentile_flag = int(all_config.get('report', 'cost_time_percentile_flag'))
+        self.cost_time_threshold = all_config.get('report', 'cost_time_threshold')
 
         self.goaccess_flag = int(all_config.get('goaccess', 'goaccess_flag'))
         self.time_format = all_config.get('goaccess', 'time-format')
