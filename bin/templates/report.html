@@ -50,14 +50,16 @@
           <div id="minutesChart" style="height:400px; width: 670px;"></div>
         </td>
       </tr>
-      {% if second_line_flag %}
+    </table>
+    {% if second_line_flag %}
+    <table class="bordered">
         <tr>
           <td>
             <div id="secondChart" style="height:400px"></div>
           </td>
         </tr>
-      {% endif %}
     </table>
+    {% endif %}
 
     {% if cost_time_percentile_flag %}
       <br>
