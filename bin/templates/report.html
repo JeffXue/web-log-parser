@@ -96,7 +96,6 @@
           <th rowspan="2"><strong>比例</strong></th>
           <th rowspan="2"><strong>每秒最大处<br/>理消息数量</strong></th>
           <th rowspan="2"><strong>Method</strong></th>
-          <th rowspan="2"><strong>Protocol</strong></th>
           <th colspan="4"><strong>耗时(秒)</strong></th>
         </tr>
         <tr>
@@ -112,7 +111,6 @@
           <th><strong>比例</strong></th>
           <th><strong>每秒最大处<br/>理消息数量</strong></th>
           <th><strong>Method</strong></th>
-          <th><strong>Protocol</strong></th>
         </tr>
       {% endif %}
 
@@ -128,7 +126,6 @@
             <td><strong>{{ url_data.ratio }}%</strong></td>
             <td><strong>{{ url_data.peak }}</strong></td>
             <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
-            <td><strong>{{ url_data.url.split()[2].replace('"', '') }}</strong></td>
             <td><strong>{{ url_data.cost_time['avg'] }}</strong></td>
             <td><strong>{{ url_data.cost_time['p9'] }}</strong></td>
             <td><strong>{{ url_data.cost_time['p5'] }}</strong></td>
@@ -143,7 +140,6 @@
             <td><strong>{{ url_data.ratio }}%</strong></td>
             <td><strong>{{ url_data.peak }}</strong></td>
             <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
-            <td><strong>{{ url_data.url.split()[2].replace('"', '') }}</strong></td>
           </tr>
         {% endif %}
       {% endfor %}
