@@ -1,8 +1,9 @@
 # -*- coding:utf-8 -*-
-import time
-import datetime
 import os
 import re
+import json
+import time
+import datetime
 from collections import Counter
 from numpy import var, average, percentile
 
@@ -22,6 +23,10 @@ class URLData:
         self.time = []
         self.cost = []
         self.cost_time = {'p9': None, 'p8': None, 'p5': None, 'avg': None, 'variance': None}
+
+    def get_data(self):
+        return {'url': self.url, 'pv': self.pv, 'ratio': self.ratio,
+                'peak': self.peak, 'cost_time': self.cost_time}
 
 
 def parse_log_format():

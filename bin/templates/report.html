@@ -193,7 +193,7 @@
               {
                 type: 'category',
                 boundaryGap: false,
-                data: [{% for hour in hours_pv %}'{{ hour }}:00',{% endfor %}]
+                data: [{% for hour in hours_times %}'{{ hour }}:00',{% endfor %}]
               }
             ],
             yAxis: [
@@ -208,7 +208,7 @@
               {
                 name: 'PV',
                 type: 'line',
-                data: [{% for hour in hours_pv %}{{ data['hours_hits'][hour] }}, {% endfor %}],
+                data: [{% for hour in hours_times %}{{ data['hours_hits'][hour] }}, {% endfor %}],
                 markPoint: {
                   data: [
                     {type: 'max', name: '最大值'},
@@ -253,7 +253,7 @@
               {
                 type: 'category',
                 boundaryGap: false,
-                data: [{% for minute in minutes_pv %}'{{ minute }}',{% endfor %}]
+                data: [{% for minute in minutes_times %}'{{ minute }}',{% endfor %}]
               }
             ],
             yAxis: [
@@ -268,7 +268,7 @@
               {
                 name: 'PV',
                 type: 'line',
-                data: [{% for minute in minutes_pv %}{{ data['minutes_hits'][minute] }}, {% endfor %}],
+                data: [{% for minute in minutes_times %}{{ data['minutes_hits'][minute] }}, {% endfor %}],
                 markPoint: {
                   data: [
                     {type: 'max', name: '最大值'},
@@ -314,7 +314,7 @@
                 {
                   type: 'category',
                   boundaryGap: false,
-                  data: [{% for second in seconds_pv %}'{{ second }}',{% endfor %}]
+                  data: [{% for second in seconds_times %}'{{ second }}',{% endfor %}]
                 }
               ],
               yAxis: [
@@ -329,7 +329,7 @@
                 {
                   name: 'PV',
                   type: 'line',
-                  data: [{% for second in seconds_pv %}{{ data['second_hits'][second] }}, {% endfor %}],
+                  data: [{% for second in seconds_times %}{{ data['second_hits'][second] }}, {% endfor %}],
                   markPoint: {
                     data: [
                       {type: 'max', name: '最大值'},
