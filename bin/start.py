@@ -267,7 +267,7 @@ def parse_log_file(target_file, log_format):
                   'second_hits': times_counter, 'cost_time_list': cost_time_list, 'cost_time_flag': cost_time_flag,
                   'cost_time_range_percentile': cost_time_range_percentile, 'method_counts': method_counts,
                   'cost_time_percentile_flag': cost_time_percentile_flag,
-                  'cost_time_threshold': config.cost_time_threshold}
+                  'cost_time_threshold': config.cost_time_threshold, 'cost_time_range': cost_time_range}
     generate_web_log_parser_report(total_data)
 
     total_data = {'source_file': target_file, 'urls': urls_counter}

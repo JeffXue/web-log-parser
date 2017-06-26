@@ -35,6 +35,7 @@ def upload_report(data, hours_times, minutes_times):
     minute_pv_peak_time = minute_most_common[0]
     cost_percent = data['cost_time_range_percentile']
     cost_time_threshold = data['cost_time_threshold']
+    cost_range = data['cost_time_range']
     url_data_list = []
 
     for url_data in data['url_data_list']:
@@ -55,9 +56,10 @@ def upload_report(data, hours_times, minutes_times):
             'minute_pv_peak_time': minute_pv_peak_time,
             'cost_percent': cost_percent,
             'cost_percent_range': ['<50ms', '50~100ms', '100~150ms', '150~200ms', '200~250ms', '250~300ms',
-                                   '300ms~350ms', '350~400ms', '400~450ms', '450~500ms', '>500ms'],
+                                   '300~350ms', '350~400ms', '400~450ms', '450~500ms', '>500ms'],
             'cost_time_threshold': cost_time_threshold,
-            'url_data_list': url_data_list}
+            'url_data_list': url_data_list,
+            'cost_range': cost_range}
     headers = {'Content-Type': 'application/json'}
     r = requests.post(config.upload_url, data=json.dumps(data), headers=headers)
     print r.text
@@ -89,7 +91,8 @@ def generate_web_log_parser_report(data):
                                   cost_time_list=data.get('cost_time_list'),
                                   cost_time_flag=data.get('cost_time_flag'),
                                   cost_time_percentile_flag=data.get('cost_time_percentile_flag'),
-                                  cost_time_threshold=data.get('cost_time_threshold'))
+                                  cost_time_threshold=data.get('cost_time_threshold'),
+                                  cost_time_range=data.get('cost_time_range'))
 
     html_file = '../result/report/' + data.get('source_file') + '.html'
     with open(html_file, 'w') as f:

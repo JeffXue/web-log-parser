@@ -31,15 +31,19 @@
 
     <br>
 
-    <table class="bordered">
-      <tr>
-        <td>
-          <div id="methodChart" style="height:200px"></div>
-        </td>
-      </tr>
-    </table>
-
-    <br>
+    {% if cost_time_percentile_flag %}
+      <br>
+      <table class="bordered">
+        <tr>
+          <td>
+            <div id="costPChart" style="height:400px; width: 670px;"></div>
+          </td>
+          <td>
+            <div id="methodChart" style="height:200px; width: 670px;"></div>
+          </td>
+        </tr>
+      </table>
+    {% endif %}
 
     <table class="bordered">
       <tr>
@@ -51,26 +55,17 @@
         </td>
       </tr>
     </table>
+
     {% if second_line_flag %}
-    <table class="bordered">
+      <table class="bordered">
         <tr>
           <td>
             <div id="secondChart" style="height:400px"></div>
           </td>
         </tr>
-    </table>
-    {% endif %}
-
-    {% if cost_time_percentile_flag %}
-      <br>
-      <table class="bordered">
-        <tr>
-          <td>
-            <div id="costPChart" style="height:400px"></div>
-          </td>
-        </tr>
       </table>
     {% endif %}
+
 
     {% if cost_time_flag %}
       <br>
@@ -117,20 +112,22 @@
       {% for url_data in data['url_data_list'] %}
         {% if url_data.cost %}
           {% if url_data.cost_time['avg'] >= cost_time_threshold %}
-          <tr style="color: red">
-            {% else %}
-          <tr>
+            <tr style="color: red">
+              {% else %}
+            <tr>
           {% endif %}
-            <td colspan="6"><strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong></td>
-            <td><strong>{{ url_data.pv }}</strong></td>
-            <td><strong>{{ url_data.ratio }}%</strong></td>
-            <td><strong>{{ url_data.peak }}</strong></td>
-            <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
-            <td><strong>{{ url_data.cost_time['avg'] }}</strong></td>
-            <td><strong>{{ url_data.cost_time['p9'] }}</strong></td>
-            <td><strong>{{ url_data.cost_time['p5'] }}</strong></td>
-            <td><strong>{{ url_data.cost_time['variance'] }}</strong></td>
-            </tr>
+        <td colspan="6">
+          <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
+        </td>
+        <td><strong>{{ url_data.pv }}</strong></td>
+        <td><strong>{{ url_data.ratio }}%</strong></td>
+        <td><strong>{{ url_data.peak }}</strong></td>
+        <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+        <td><strong>{{ url_data.cost_time['avg'] }}</strong></td>
+        <td><strong>{{ url_data.cost_time['p9'] }}</strong></td>
+        <td><strong>{{ url_data.cost_time['p5'] }}</strong></td>
+        <td><strong>{{ url_data.cost_time['variance'] }}</strong></td>
+        </tr>
         {% else %}
           <tr>
             <td colspan="6">
@@ -162,7 +159,8 @@
           'echarts/theme/macarons',
           'echarts/chart/bar',
           'echarts/chart/line',
-          'echarts/chart/scatter'
+          'echarts/chart/scatter',
+          'echarts/chart/pie'
         ],
         function (ec, theme) {
           var hoursChart = ec.init(document.getElementById('hoursChart'), theme);
@@ -347,128 +345,156 @@
             secondChart.setOption(secondOption);
           {% endif %}
 
+
           var methodChart = ec.init(document.getElementById('methodChart'), theme);
 
-          var methodOption = {
-            title: {
-              text: 'GET和POST请求比例',
-              subtext: ''
-            },
+          methodChart.setOption({
             tooltip: {
-              trigger: 'axis'
+              trigger: 'item',
+              formatter: '{a} <br/>{b} : {c} ({d}%)'
+
             },
             legend: {
-              data: ['数量', '占比%']
+              x: 'center',
+              y: 'bottom',
+              data: ['GET', 'POST']
             },
             toolbox: {
               show: true,
               feature: {
-                mark: {show: false},
-                dataView: {show: false, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: false},
-                saveAsImage: {show: true}
+                magicType: {
+                  show: true,
+                  type: ['pie', 'funnel'],
+                  option: {
+                    funnel: {
+                      x: '25%',
+                      width: '50%',
+                      funnelAlign: 'left'
+                    }
+                  }
+                },
+                restore: {
+                  show: true,
+                  title: "Restore"
+                },
+                saveAsImage: {
+                  show: true,
+                  title: "Save Image"
+                }
               }
             },
             calculable: true,
-            xAxis: [
-              {
-                type: 'value',
-                boundaryGap: [0, 0.01]
-              }
-            ],
-            yAxis: [
-              {
-                type: 'category',
-                data: ['GET', 'POST']
-              }
-            ],
-            series: [
-              {
-                name: '数量',
-                type: 'bar',
-                data: [{{ method_counts['get'] }}, {{ method_counts['post'] }}]
-              },
-              {
-                name: '占比%',
-                type: 'bar',
-                data: ['{{ method_counts['get_percentile'] }}', '{{ method_counts['post_percentile'] }}']
-              }
-            ]
-          };
-          methodChart.setOption(methodOption);
+            series: [{
+              name: '占比',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '48%'],
+              data: [
+                {
+                  value: {{ method_counts['get'] }},
+                  name: 'GET'
+                },
+                {
+                  value: {{ method_counts['post'] }},
+                  name: 'POST'
+                }
+              ]
+            }]
+          });
 
 
           {% if cost_time_percentile_flag %}
             var costPChart = ec.init(document.getElementById('costPChart'), theme);
 
-            var costPOption = {
-              title: {
-                text: '响应时间区间占比',
-                subtext: ''
-              },
+            costPChart.setOption({
               tooltip: {
-                trigger: 'axis'
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
               },
               legend: {
-                data: ['占比%']
+                x: 'center',
+                y: 'bottom',
+                data: ['<50ms', '50~100ms', '100~150ms', '150~200ms', '200~250ms', '250~300ms', '300~350ms', '350~400ms', '400~450ms', '450~500ms', '>500ms']
               },
               toolbox: {
                 show: true,
                 feature: {
-                  mark: {show: false},
-                  dataView: {show: false, readOnly: false},
-                  magicType: {show: true, type: ['line', 'bar']},
-                  restore: {show: false},
-                  saveAsImage: {show: true}
+                  magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                      funnel: {
+                        x: '25%',
+                        width: '50%',
+                        funnelAlign: 'left'
+                      }
+                    }
+                  },
+                  restore: {
+                    show: true,
+                    title: "Restore"
+                  },
+                  saveAsImage: {
+                    show: true,
+                    title: "Save Image"
+                  }
                 }
               },
               calculable: true,
-              xAxis: [
-                {
-                  type: 'category',
-                  data: ['<50ms', '50~100ms', '100~150ms', '150~200ms', '200~250ms', '250~300ms', '300ms~350ms',
-                    '350~400ms', '400~450ms', '450~500ms', '>500ms']
-                }
-              ],
-              yAxis: [
-                {
-                  type: 'value',
-                  axisLabel: {
-                    formatter: '{value} %'
-                  }
-                }
-              ],
-              series: [
-                {
-                  name: '占比',
-                  type: 'bar',
-                  data: [{{ cost_time_range_percentile['r1p'] }},
-                    {{ cost_time_range_percentile['r2p'] }},
-                    {{ cost_time_range_percentile['r3p'] }},
-                    {{ cost_time_range_percentile['r4p'] }},
-                    {{ cost_time_range_percentile['r5p'] }},
-                    {{ cost_time_range_percentile['r6p'] }},
-                    {{ cost_time_range_percentile['r7p'] }},
-                    {{ cost_time_range_percentile['r8p'] }},
-                    {{ cost_time_range_percentile['r9p'] }},
-                    {{ cost_time_range_percentile['r10p'] }},
-                    {{ cost_time_range_percentile['r11p'] }}],
-                  markPoint: {
-                    data: [
-                      {type: 'max', name: '最大值'},
-                      {type: 'min', name: '最小值'}
-                    ]
+              series: [{
+                name: '占比',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '48%'],
+                data: [
+                  {
+                    value: {{ cost_time_range['r1'] }},
+                    name: '<50ms'
                   },
-                  markLine: {
-                    data: [
-                      {type: 'average', name: '平均值'}
-                    ]
+                  {
+                    value: {{ cost_time_range['r2'] }},
+                    name: '50~100ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r3'] }},
+                    name: '100~150ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r4'] }},
+                    name: '150~200ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r5'] }},
+                    name: '200~250ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r6'] }},
+                    name: '250~300ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r7'] }},
+                    name: '300~350ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r8'] }},
+                    name: '350~400ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r9'] }},
+                    name: '400~450ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r10'] }},
+                    name: '450~500ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r11'] }},
+                    name: '>500ms'
                   }
-                }
-              ]
-            };
-            costPChart.setOption(costPOption);
+                ]
+              }]
+            });
+
           {% endif %}
 
           {% if cost_time_flag %}
