@@ -92,7 +92,7 @@ def get_new_url(origin_url):
 
 def get_new_url_for_always_parameters(origin_url):
     if len(origin_url.split('?')) == 1:
-        return origin_url
+        return origin_url.split('?')[0]
 
     url_front = origin_url.split('?')[0]
     url_parameters = sorted(origin_url.split('?')[1].split('&'))
@@ -104,7 +104,7 @@ def get_new_url_for_always_parameters(origin_url):
     if new_url_parameters:
         new_url = url_front + '?' + '&amp;'.join(new_url_parameters)
     else:
-        new_url = origin_url
+        new_url = url_front
     return new_url
 
 
