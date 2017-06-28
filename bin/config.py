@@ -15,6 +15,7 @@ class Config:
 
         self.support_method = all_config.get('filter', 'support_method').split(',')
         self.is_with_parameters = int(all_config.get('filter', 'is_with_parameters'))
+        self.always_parameter_keys = all_config.get('filter', 'always_parameter_keys').split(',')
         self.urls_most_number = int(all_config.get('filter', 'urls_most_number'))
         self.urls_pv_threshold = int(all_config.get('filter', 'urls_pv_threshold'))
         self.fixed_parameter_keys = all_config.get('filter', 'fixed_parameter_keys').split(',')

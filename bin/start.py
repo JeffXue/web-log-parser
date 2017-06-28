@@ -90,6 +90,24 @@ def get_new_url(origin_url):
     return new_url
 
 
+def get_new_url_for_always_parameters(origin_url):
+    if len(origin_url.split('?')) == 1:
+        return origin_url
+
+    url_front = origin_url.split('?')[0]
+    url_parameters = sorted(origin_url.split('?')[1].split('&'))
+    new_url_parameters = []
+    for parameter in url_parameters:
+        key = parameter.split('=')[0]
+        if key in config.always_parameter_keys:
+            new_url_parameters.append(parameter)
+    if new_url_parameters:
+        new_url = url_front + '?' + '&amp;'.join(new_url_parameters)
+    else:
+        new_url = origin_url
+    return new_url
+
+
 def parse_log_file(target_file, log_format):
     # 用户IP
     hosts = []
@@ -125,7 +143,10 @@ def parse_log_file(target_file, log_format):
             if config.is_with_parameters:
                 url = get_new_url(match.group(log_format.get('url_index')))
             else:
-                url = match.group(log_format.get('url_index')).split('?')[0]
+                if config.always_parameter_keys:
+                    url = get_new_url_for_always_parameters(match.group(log_format.get('url_index')))
+                else:
+                    url = match.group(log_format.get('url_index')).split('?')[0]
             if is_ignore_url(url):
                 continue
             if match.group(log_format.get('method_index')) not in config.support_method:
@@ -187,7 +208,10 @@ def parse_log_file(target_file, log_format):
             if config.is_with_parameters:
                 url = get_new_url(match.group(log_format.get('url_index')))
             else:
-                url = match.group(log_format.get('url_index')).split('?')[0]
+                if config.always_parameter_keys:
+                    url = get_new_url_for_always_parameters(match.group(log_format.get('url_index')))
+                else:
+                    url = match.group(log_format.get('url_index')).split('?')[0]
             for url_data in url_data_list:
                 if url_data.url == ' '.join([method, url]):
                     url_data.time.append(match.group(log_format.get('time_index')))
