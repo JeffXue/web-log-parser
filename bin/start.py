@@ -294,9 +294,6 @@ def parse_log_file(target_file, log_format):
                   'cost_time_threshold': config.cost_time_threshold, 'cost_time_range': cost_time_range}
     generate_web_log_parser_report(total_data)
 
-    total_data = {'source_file': target_file, 'urls': urls_counter}
-    generate_web_log_parser_urls(total_data)
-
 
 def parse_log_file_with_goaccess(target_file):
     source_file = '../data/' + target_file
