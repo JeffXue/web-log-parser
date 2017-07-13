@@ -59,7 +59,8 @@ def upload_report(data, hours_times, minutes_times):
                                    '300~350ms', '350~400ms', '400~450ms', '450~500ms', '>500ms'],
             'cost_time_threshold': cost_time_threshold,
             'url_data_list': url_data_list,
-            'cost_range': cost_range}
+            'cost_range': cost_range,
+            'status_codes': data['status_codes']}
     headers = {'Content-Type': 'application/json'}
     r = requests.post(config.upload_url, data=json.dumps(data), headers=headers)
     print r.text
