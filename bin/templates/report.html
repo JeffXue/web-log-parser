@@ -35,12 +35,24 @@
       <br>
       <table class="bordered">
         <tr>
-          <td>
-            <div id="costPChart" style="height:400px; width: 670px;"></div>
-          </td>
-          <td>
-            <div id="methodChart" style="height:200px; width: 670px;"></div>
-          </td>
+          {% if status_codes %}
+            <td>
+              <div id="costPChart" style="height:400px; width: 400px;"></div>
+            </td>
+            <td>
+              <div id="statusChart" style="height:400px; width: 400px;"></div>
+            </td>
+            <td>
+              <div id="methodChart" style="height:400px; width: 400px;"></div>
+            </td>
+          {% else %}
+            <td>
+              <div id="costPChart" style="height:400px; width: 670px;"></div>
+            </td>
+            <td>
+              <div id="methodChart" style="height:400px; width: 670px;"></div>
+            </td>
+          {% endif %}
         </tr>
       </table>
     {% endif %}
@@ -402,6 +414,70 @@
             }]
           });
 
+          {% if status_codes %}
+
+            var statusChart = ec.init(document.getElementById('statusChart'), theme);
+
+            statusChart.setOption({
+              tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>status code({b}): {c} ({d}%)'
+
+              },
+              legend: {
+                x: 'center',
+                y: 'bottom',
+                data: [{% for key in status_codes_keys %}{% if loop.last %}{{ key }}{% else %}{{ key }}, {% endif %}{% endfor %}]
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                      funnel: {
+                        x: '25%',
+                        width: '50%',
+                        funnelAlign: 'left'
+                      }
+                    }
+                  },
+                  restore: {
+                    show: true,
+                    title: "Restore"
+                  },
+                  saveAsImage: {
+                    show: true,
+                    title: "Save Image"
+                  }
+                }
+              },
+              calculable: true,
+              series: [{
+                name: '占比',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '48%'],
+                data: [
+                  {% for key in status_codes_keys %}
+                    {% if loop.last %}
+                      {
+                        value: {{ status_codes[key] }},
+                        name: {{ key }}
+                      }
+                    {% else %}
+                      {
+                        value: {{ status_codes[key] }},
+                        name: {{ key }}
+                      },
+                    {% endif %}
+                  {% endfor %}
+                ]
+              }]
+            });
+          {% endif %}
+
 
           {% if cost_time_percentile_flag %}
             var costPChart = ec.init(document.getElementById('costPChart'), theme);
@@ -494,7 +570,6 @@
                 ]
               }]
             });
-
           {% endif %}
 
           {% if cost_time_flag %}

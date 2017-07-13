@@ -47,10 +47,14 @@ def parse_log_format():
             log_format_index.setdefault('protocol_index', log_format_list.index(item) + 1)
         if item == 'cost':
             log_format_index.setdefault('cost_time_index', log_format_list.index(item) + 1)
+        if item == 'status':
+            log_format_index.setdefault('status', log_format_list.index(item) + 1)
+
     if 'real_ip_index' in log_format_index.keys():
         log_format_index.setdefault('host_index', log_format_list.index('real_ip') + 1)
     else:
         log_format_index.setdefault('host_index', log_format_list.index('ip') + 1)
+
     return log_format_index
 
 
@@ -132,6 +136,9 @@ def parse_log_file(target_file, log_format):
     # 请求方法计数器
     method_counts = {'post': 0, 'post_percentile': 0, 'get': 0, 'get_percentile': 0}
 
+    # http status code统计
+    status_codes = {}
+
     pattern = re.compile(config.log_pattern)
 
     # 第一次读取整个文件，获取对应的请求时间、请求URL、请求方法、用户IP、请求响应时间等数据
@@ -169,6 +176,12 @@ def parse_log_file(target_file, log_format):
                         cost_time_list.append({'time': log_time, 'cost_time': int(float(match.group(log_format.get('cost_time_index'))) * 1000)})
                     else:
                         cost_time_list.append({'time': '', 'cost_time': int(float(match.group(log_format.get('cost_time_index'))) * 1000)})
+                if 'status' in log_format.keys():
+                    status_code = int(match.group(log_format.get('status')))
+                    if status_code in status_codes.keys():
+                        status_codes[status_code] += 1
+                    else:
+                        status_codes.setdefault(status_code, 1)
 
     # 计算PV、UV、平均请求数、GET/POST占比
     pv = len(times)
@@ -291,7 +304,8 @@ def parse_log_file(target_file, log_format):
                   'second_hits': times_counter, 'cost_time_list': cost_time_list, 'cost_time_flag': cost_time_flag,
                   'cost_time_range_percentile': cost_time_range_percentile, 'method_counts': method_counts,
                   'cost_time_percentile_flag': cost_time_percentile_flag,
-                  'cost_time_threshold': config.cost_time_threshold, 'cost_time_range': cost_time_range}
+                  'cost_time_threshold': config.cost_time_threshold, 'cost_time_range': cost_time_range,
+                  'status_codes': status_codes}
     generate_web_log_parser_report(total_data)
 
 

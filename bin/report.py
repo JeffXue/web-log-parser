@@ -92,7 +92,9 @@ def generate_web_log_parser_report(data):
                                   cost_time_flag=data.get('cost_time_flag'),
                                   cost_time_percentile_flag=data.get('cost_time_percentile_flag'),
                                   cost_time_threshold=data.get('cost_time_threshold'),
-                                  cost_time_range=data.get('cost_time_range'))
+                                  cost_time_range=data.get('cost_time_range'),
+                                  status_codes=data.get('status_codes'),
+                                  status_codes_keys=data.get('status_codes').keys())
 
     html_file = '../result/report/' + data.get('source_file') + '.html'
     with open(html_file, 'w') as f:
