@@ -179,14 +179,14 @@
 
           var hoursOption = {
             title: {
-              text: '每小时PV变化曲线图',
+              text: '每小时处理请求数量',
               subtext: ''
             },
             tooltip: {
               trigger: 'axis'
             },
             legend: {
-              data: ['每小时PV']
+              data: ['处理请求数']
             },
             toolbox: {
               show: true,
@@ -216,7 +216,7 @@
             ],
             series: [
               {
-                name: 'PV',
+                name: '处理请求数',
                 type: 'line',
                 data: [{% for hour in hours_times %}{{ data['hours_hits'][hour] }}, {% endfor %}],
                 markPoint: {
@@ -239,14 +239,14 @@
 
           var minuteOption = {
             title: {
-              text: '每分钟PV变化曲线图',
+              text: '每分钟处理请求数量',
               subtext: ''
             },
             tooltip: {
               trigger: 'axis'
             },
             legend: {
-              data: ['每分钟PV']
+              data: ['处理请求数']
             },
             toolbox: {
               show: true,
@@ -276,7 +276,7 @@
             ],
             series: [
               {
-                name: 'PV',
+                name: '处理请求数',
                 type: 'line',
                 data: [{% for minute in minutes_times %}{{ data['minutes_hits'][minute] }}, {% endfor %}],
                 markPoint: {
@@ -300,14 +300,14 @@
 
             var secondOption = {
               title: {
-                text: '每秒PV变化曲线图',
+                text: '每秒处理请求数量',
                 subtext: ''
               },
               tooltip: {
                 trigger: 'axis'
               },
               legend: {
-                data: ['每秒PV']
+                data: ['处理请求数']
               },
               toolbox: {
                 show: true,
@@ -337,7 +337,7 @@
               ],
               series: [
                 {
-                  name: 'PV',
+                  name: '处理请求数',
                   type: 'line',
                   data: [{% for second in seconds_times %}{{ data['second_hits'][second] }}, {% endfor %}],
                   markPoint: {
@@ -361,6 +361,9 @@
           var methodChart = ec.init(document.getElementById('methodChart'), theme);
 
           methodChart.setOption({
+            title: {
+              text: 'Request Method统计'
+            },
             tooltip: {
               trigger: 'item',
               formatter: '{a} <br/>{b} : {c} ({d}%)'
@@ -419,6 +422,9 @@
             var statusChart = ec.init(document.getElementById('statusChart'), theme);
 
             statusChart.setOption({
+              title: {
+                text: 'Response Status Code统计'
+              },
               tooltip: {
                 trigger: 'item',
                 formatter: '{a} <br/>status code={b}: {c} ({d}%)'
@@ -483,6 +489,9 @@
             var costPChart = ec.init(document.getElementById('costPChart'), theme);
 
             costPChart.setOption({
+              title: {
+                text: 'Response Time统计'
+              },
               tooltip: {
                 trigger: 'item',
                 formatter: '{a} <br/>{b} : {c} ({d}%)'
