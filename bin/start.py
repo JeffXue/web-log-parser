@@ -209,9 +209,14 @@ def parse_log_file(target_file, log_format):
     # 计算请求占比
     url_data_list = []
     for item in urls_most_common:
-        if item[1] >= config.urls_pv_threshold or cross_time.seconds < 600:
+        if item[1] >= config.urls_pv_threshold:
             ratio = '%0.3f' % float(item[1] * 100 / float(pv))
             url_data_list.append(URLData(url=item[0], pv=item[1], ratio=ratio))
+            continue
+        if cross_time.seconds < config.urls_pv_threshold_time and item[1] >= config.urls_pv_threshold_min:
+            ratio = '%0.3f' % float(item[1] * 100 / float(pv))
+            url_data_list.append(URLData(url=item[0], pv=item[1], ratio=ratio))
+            continue
 
     # 第二次读取文件，以获取特定请求的访问时间及响应时间
     with open('../data/' + target_file, 'r') as f:

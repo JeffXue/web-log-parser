@@ -18,6 +18,8 @@ class Config:
         self.always_parameter_keys = all_config.get('filter', 'always_parameter_keys').split(',')
         self.urls_most_number = int(all_config.get('filter', 'urls_most_number'))
         self.urls_pv_threshold = int(all_config.get('filter', 'urls_pv_threshold'))
+        self.urls_pv_threshold_time = int(all_config.get('filter', 'urls_pv_threshold_time'))
+        self.urls_pv_threshold_min = int(all_config.get('filter', 'urls_pv_threshold_min'))
         self.fixed_parameter_keys = all_config.get('filter', 'fixed_parameter_keys').split(',')
         self.custom_parameters_list = all_config.get('filter', 'custom_parameters').split(',')
         self.custom_keys = []
