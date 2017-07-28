@@ -209,7 +209,7 @@ def parse_log_file(target_file, log_format):
     # 计算请求占比
     url_data_list = []
     for item in urls_most_common:
-        if item[1] >= config.urls_pv_threshold or cross_time < 600:
+        if item[1] >= config.urls_pv_threshold or cross_time.seconds < 600:
             ratio = '%0.3f' % float(item[1] * 100 / float(pv))
             url_data_list.append(URLData(url=item[0], pv=item[1], ratio=ratio))
 
