@@ -92,68 +92,70 @@
 
     <br>
 
-    <table class="bordered">
-      <caption>
-        Top requests
-      </caption>
-      {% if data['url_data_list'][0].cost %}
-        <tr>
-          <th colspan="6" rowspan="2"><strong>Requests</strong></th>
-          <th rowspan="2"><strong>访问量</strong></th>
-          <th rowspan="2"><strong>比例</strong></th>
-          <th rowspan="2"><strong>每秒处理<br/>请求数（峰值）</strong></th>
-          <th rowspan="2"><strong>Method</strong></th>
-          <th colspan="4"><strong>耗时(秒)</strong></th>
-        </tr>
-        <tr>
-          <th><strong>均值</strong></th>
-          <th><strong>90%</strong></th>
-          <th><strong>中值</strong></th>
-          <th><strong>方差</strong></th>
-        </tr>
-      {% else %}
-        <tr>
-          <th colspan="6"><strong>Requests</strong></th>
-          <th><strong>访问量</strong></th>
-          <th><strong>比例</strong></th>
-          <th><strong>每秒处理<br/>请求数（峰值）</strong></th>
-          <th><strong>Method</strong></th>
-        </tr>
-      {% endif %}
-
-      {% for url_data in data['url_data_list'] %}
-        {% if url_data.cost %}
-          {% if url_data.cost_time['avg'] >= cost_time_threshold %}
-            <tr style="color: red">
-              {% else %}
-            <tr>
-          {% endif %}
-        <td colspan="6">
-          <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
-        </td>
-        <td><strong>{{ url_data.pv }}</strong></td>
-        <td><strong>{{ url_data.ratio }}%</strong></td>
-        <td><strong>{{ url_data.peak }}</strong></td>
-        <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
-        <td><strong>{{ url_data.cost_time['avg'] }}</strong></td>
-        <td><strong>{{ url_data.cost_time['p9'] }}</strong></td>
-        <td><strong>{{ url_data.cost_time['p5'] }}</strong></td>
-        <td><strong>{{ url_data.cost_time['variance'] }}</strong></td>
-        </tr>
+    {% if data['url_data_list'] %}
+      <table class="bordered">
+        <caption>
+          Top requests
+        </caption>
+        {% if data['url_data_list'][0].cost %}
+          <tr>
+            <th colspan="6" rowspan="2"><strong>Requests</strong></th>
+            <th rowspan="2"><strong>访问量</strong></th>
+            <th rowspan="2"><strong>比例</strong></th>
+            <th rowspan="2"><strong>每秒处理<br/>请求数（峰值）</strong></th>
+            <th rowspan="2"><strong>Method</strong></th>
+            <th colspan="4"><strong>耗时(秒)</strong></th>
+          </tr>
+          <tr>
+            <th><strong>均值</strong></th>
+            <th><strong>90%</strong></th>
+            <th><strong>中值</strong></th>
+            <th><strong>方差</strong></th>
+          </tr>
         {% else %}
           <tr>
-            <td colspan="6">
-              <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
-            </td>
-            <td><strong>{{ url_data.pv }}</strong></td>
-            <td><strong>{{ url_data.ratio }}%</strong></td>
-            <td><strong>{{ url_data.peak }}</strong></td>
-            <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+            <th colspan="6"><strong>Requests</strong></th>
+            <th><strong>访问量</strong></th>
+            <th><strong>比例</strong></th>
+            <th><strong>每秒处理<br/>请求数（峰值）</strong></th>
+            <th><strong>Method</strong></th>
           </tr>
         {% endif %}
-      {% endfor %}
 
-    </table>
+        {% for url_data in data['url_data_list'] %}
+          {% if url_data.cost %}
+            {% if url_data.cost_time['avg'] >= cost_time_threshold %}
+              <tr style="color: red">
+                {% else %}
+              <tr>
+            {% endif %}
+          <td colspan="6">
+            <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
+          </td>
+          <td><strong>{{ url_data.pv }}</strong></td>
+          <td><strong>{{ url_data.ratio }}%</strong></td>
+          <td><strong>{{ url_data.peak }}</strong></td>
+          <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+          <td><strong>{{ url_data.cost_time['avg'] }}</strong></td>
+          <td><strong>{{ url_data.cost_time['p9'] }}</strong></td>
+          <td><strong>{{ url_data.cost_time['p5'] }}</strong></td>
+          <td><strong>{{ url_data.cost_time['variance'] }}</strong></td>
+          </tr>
+          {% else %}
+            <tr>
+              <td colspan="6">
+                <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
+              </td>
+              <td><strong>{{ url_data.pv }}</strong></td>
+              <td><strong>{{ url_data.ratio }}%</strong></td>
+              <td><strong>{{ url_data.peak }}</strong></td>
+              <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+
+      </table>
+    {% endif %}
   </div>
 
   <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
