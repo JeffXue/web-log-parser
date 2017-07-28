@@ -183,6 +183,8 @@ def parse_log_file(target_file, log_format):
                     else:
                         status_codes.setdefault(status_code, 1)
 
+    cross_time = datetime.datetime.strptime(times[-1], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(times[0], '%Y-%m-%d %H:%M:%S')
+
     # 计算PV、UV、平均请求数、GET/POST占比
     pv = len(times)
     uv = len(set(hosts))
@@ -207,7 +209,7 @@ def parse_log_file(target_file, log_format):
     # 计算请求占比
     url_data_list = []
     for item in urls_most_common:
-        if item[1] >= config.urls_pv_threshold:
+        if item[1] >= config.urls_pv_threshold or cross_time < 600:
             ratio = '%0.3f' % float(item[1] * 100 / float(pv))
             url_data_list.append(URLData(url=item[0], pv=item[1], ratio=ratio))
 
