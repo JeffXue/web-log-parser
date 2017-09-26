@@ -74,7 +74,7 @@ def is_ignore_url(url):
         return True
 
 
-def get_new_url(origin_url):
+def get_new_url_with_parameters(origin_url):
     if len(origin_url.split('?')) == 1:
         return origin_url
     url_front = origin_url.split('?')[0]
@@ -112,6 +112,36 @@ def get_new_url_for_always_parameters(origin_url):
     return new_url
 
 
+def ignore_url_suffix(origin_url):
+    if len(origin_url.split('?')) == 1:
+        uri_parameter = None
+    else:
+        uri_parameter = origin_url.split('?')[1:]
+
+    uri = origin_url.split('?')[0]
+    new_uri = uri
+    for suffix in config.ignore_url_suffix:
+        if uri.endswith(suffix):
+            new_uri = uri.split(suffix)[0]
+            break
+    if uri_parameter:
+        return new_uri + '?'.join(uri_parameter)
+    else:
+        return new_uri
+
+
+def get_url(match, log_format):
+    origin_url = ignore_url_suffix(match.group(log_format.get('url_index')))
+    if config.is_with_parameters:
+        url = get_new_url_with_parameters(origin_url)
+    else:
+        if config.always_parameter_keys:
+            url = get_new_url_for_always_parameters(origin_url)
+        else:
+            url = match.group(origin_url.split('?')[0].split('.json')[0])
+    return url
+
+
 def parse_log_file(target_file, log_format):
     # 用户IP
     hosts = []
@@ -147,13 +177,7 @@ def parse_log_file(target_file, log_format):
             match = pattern.match(line)
             if match is None:
                 continue
-            if config.is_with_parameters:
-                url = get_new_url(match.group(log_format.get('url_index')))
-            else:
-                if config.always_parameter_keys:
-                    url = get_new_url_for_always_parameters(match.group(log_format.get('url_index')))
-                else:
-                    url = match.group(log_format.get('url_index')).split('?')[0]
+            url = get_url(match, log_format)
             if is_ignore_url(url):
                 continue
             if match.group(log_format.get('method_index')) not in config.support_method:
@@ -228,13 +252,7 @@ def parse_log_file(target_file, log_format):
             if match is None:
                 continue
             method = match.group(log_format.get('method_index'))
-            if config.is_with_parameters:
-                url = get_new_url(match.group(log_format.get('url_index')))
-            else:
-                if config.always_parameter_keys:
-                    url = get_new_url_for_always_parameters(match.group(log_format.get('url_index')))
-                else:
-                    url = match.group(log_format.get('url_index')).split('?')[0]
+            url = get_url(match, log_format)
             for url_data in url_data_list:
                 if url_data.url == ' '.join([method, url]):
                     url_data.time.append(match.group(log_format.get('time_index')))
