@@ -125,7 +125,7 @@ def ignore_url_suffix(origin_url):
             new_uri = uri.split(suffix)[0]
             break
     if uri_parameter:
-        return new_uri + '?'.join(uri_parameter)
+        return new_uri + '?' + '?'.join(uri_parameter)
     else:
         return new_uri
 
