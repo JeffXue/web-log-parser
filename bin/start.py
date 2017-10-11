@@ -3,6 +3,7 @@ import os
 import re
 import json
 import time
+import traceback
 import datetime
 from collections import Counter
 from numpy import var, average, percentile
@@ -357,14 +358,17 @@ def main():
     target_files = sorted([data_file for data_file in get_dir_files('../data') if data_file not in result_files])
 
     for target_file in target_files:
-        print datetime.datetime.now(), ' Start parse file : ' + target_file
+        try:
+            print datetime.datetime.now(), ' Start parse file : ' + target_file
 
-        parse_log_file(target_file, log_format)
-        if config.goaccess_flag:
-            parse_log_file_with_goaccess(target_file)
+            parse_log_file(target_file, log_format)
+            if config.goaccess_flag:
+                parse_log_file_with_goaccess(target_file)
 
-        print datetime.datetime.now(), ' End parse file: ' + target_file
-
+            print datetime.datetime.now(), ' End parse file: ' + target_file
+        except Exception:
+            exstr = traceback.format_exc()
+            print exstr
     update_index_html()
 
 
