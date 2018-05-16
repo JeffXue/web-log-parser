@@ -76,14 +76,17 @@ def is_ignore_url(url):
 
 
 def get_new_url_with_parameters(origin_url):
-    if len(origin_url.split('?')) == 1:
+    origin_url_list = origin_url.split('?')
+
+    if len(origin_url_list) == 1:
         return origin_url
-    url_front = origin_url.split('?')[0]
-    url_parameters = sorted(origin_url.split('?')[1].split('&'))
+    url_front = origin_url_list[0]
+    url_parameters = sorted(origin_url_list[1].split('&'))
     new_url_parameters = []
     for parameter in url_parameters:
-        key = parameter.split('=')[0]
-        if len(parameter.split('=')) == 1:
+        parameter_list = parameter.split('=')
+        key = parameter_list[0]
+        if len(parameter_list) == 1:
             new_url_parameters.append(parameter)
         elif key in config.custom_keys:
             new_url_parameters.append(key + '=' + config.custom_parameters.get(key))
@@ -96,11 +99,13 @@ def get_new_url_with_parameters(origin_url):
 
 
 def get_new_url_for_always_parameters(origin_url):
-    if len(origin_url.split('?')) == 1:
-        return origin_url.split('?')[0]
+    origin_url_list = origin_url.split('?')
 
-    url_front = origin_url.split('?')[0]
-    url_parameters = sorted(origin_url.split('?')[1].split('&'))
+    if len(origin_url_list) == 1:
+        return origin_url_list[0]
+
+    url_front = origin_url_list[0]
+    url_parameters = sorted(origin_url_list[1].split('&'))
     new_url_parameters = []
     for parameter in url_parameters:
         key = parameter.split('=')[0]
@@ -114,16 +119,18 @@ def get_new_url_for_always_parameters(origin_url):
 
 
 def ignore_url_suffix(origin_url):
-    if len(origin_url.split('?')) == 1:
+    origin_url_list = origin_url.split('?')
+
+    if len(origin_url_list) == 1:
         uri_parameter = None
     else:
-        uri_parameter = origin_url.split('?')[1:]
+        uri_parameter = origin_url_list[1:]
 
-    uri = origin_url.split('?')[0]
+    uri = origin_url_list[0]
     new_uri = uri
     for suffix in config.ignore_url_suffix:
         if uri.endswith(suffix):
-            new_uri = uri.split(suffix)[0]
+            new_uri = uri.replace(suffix, '')
             break
     if uri_parameter:
         return new_uri + '?' + '?'.join(uri_parameter)
@@ -181,26 +188,31 @@ def parse_log_file(target_file, log_format):
             url = get_url(match, log_format)
             if is_ignore_url(url):
                 continue
-            if match.group(log_format.get('method_index')) not in config.support_method:
+
+            match_method = match.group(log_format.get('method_index'))
+
+            if match_method not in config.support_method:
                 continue
             if not_static_file(url):
                 hosts.append(match.group(log_format.get('host_index')).split(',')[0])
-                log_time = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(match.group(log_format.get('time_index')),
-                                                                            '%d/%b/%Y:%H:%M:%S'))
+                # log_time = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(match.group(log_format.get('time_index')),
+                #                                                             '%d/%b/%Y:%H:%M:%S'))
+                log_time = match.group(log_format.get('time_index'))
                 times.append(log_time)
-                hours.append(log_time.split(':')[0])
-                minutes.append(':'.join(log_time.split(':')[0:-1]))
-                method = match.group(log_format.get('method_index'))
-                if method == 'POST':
+                log_time_list = log_time.split(':')
+                hours.append(':'.join(log_time_list[0:2]))
+                minutes.append(':'.join(log_time_list[0:3]))
+                if match_method == 'POST':
                     method_counts['post'] += 1
-                if method == 'GET':
+                if match_method == 'GET':
                     method_counts['get'] += 1
-                urls.append(method + ' ' + url)
+                urls.append(match_method + ' ' + url)
                 if 'cost_time_index' in log_format.keys():
+                    request_cost_time = int(float(match.group(log_format.get('cost_time_index'))) * 1000)
                     if cost_time_flag:
-                        cost_time_list.append({'time': log_time, 'cost_time': int(float(match.group(log_format.get('cost_time_index'))) * 1000)})
+                        cost_time_list.append({'time': log_time, 'cost_time': request_cost_time})
                     else:
-                        cost_time_list.append({'time': '', 'cost_time': int(float(match.group(log_format.get('cost_time_index'))) * 1000)})
+                        cost_time_list.append({'time': '', 'cost_time': request_cost_time})
                 if 'status' in log_format.keys():
                     status_code = int(match.group(log_format.get('status')))
                     if status_code in status_codes.keys():
@@ -209,7 +221,7 @@ def parse_log_file(target_file, log_format):
                         status_codes.setdefault(status_code, 1)
 
     if len(times) > 2:
-        cross_time = datetime.datetime.strptime(times[-1], '%Y-%m-%d %H:%M:%S') - datetime.datetime.strptime(times[0], '%Y-%m-%d %H:%M:%S')
+        cross_time = datetime.datetime.strptime(times[-1], '%d/%b/%Y:%H:%M:%S') - datetime.datetime.strptime(times[0], '%d/%b/%Y:%H:%M:%S')
     else:
         cross_time = None
 
@@ -236,14 +248,17 @@ def parse_log_file(target_file, log_format):
 
     # 计算请求占比
     url_data_list = []
+    for_url_data_uri_index = []
     for item in urls_most_common:
         if item[1] >= config.urls_pv_threshold:
             ratio = '%0.3f' % float(item[1] * 100 / float(pv))
             url_data_list.append(URLData(url=item[0], pv=item[1], ratio=ratio))
+            for_url_data_uri_index.append(item[0])
             continue
         if cross_time and cross_time.seconds < config.urls_pv_threshold_time and item[1] >= config.urls_pv_threshold_min:
             ratio = '%0.3f' % float(item[1] * 100 / float(pv))
             url_data_list.append(URLData(url=item[0], pv=item[1], ratio=ratio))
+            for_url_data_uri_index.append(item[0])
             continue
 
     # 第二次读取文件，以获取特定请求的访问时间及响应时间
@@ -254,12 +269,13 @@ def parse_log_file(target_file, log_format):
                 continue
             method = match.group(log_format.get('method_index'))
             url = get_url(match, log_format)
-            for url_data in url_data_list:
-                if url_data.url == ' '.join([method, url]):
-                    url_data.time.append(match.group(log_format.get('time_index')))
-                    if 'cost_time_index' in log_format.keys():
-                        url_data.cost.append(float(match.group(log_format.get('cost_time_index'))))
-                    break
+
+            target_url = ' '.join([method, url])
+            if target_url in for_url_data_uri_index:
+                index = for_url_data_uri_index.index(target_url)
+                url_data_list[index].time.append(match.group(log_format.get('time_index')))
+                if 'cost_time_index' in log_format.keys():
+                    url_data_list[index].cost.append(float(match.group(log_format.get('cost_time_index'))))
 
     for url_data in url_data_list:
         # 计算每个特定请求的每秒最大并发
