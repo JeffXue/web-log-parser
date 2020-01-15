@@ -1,53 +1,56 @@
 ## web-log-parser
-**web-log-parser**为开源的分析web日志工具，采用python语言开发，具有灵活的日志格式配置。
+**web-log-parser** is an open source analysis web log tool, developed in python language, with flexible log format configuration
 
 ---
 
-## 样例
-![样例图片](https://raw.githubusercontent.com/JeffXue/web-log-parser/master/example.png)
+## Example
+![example picture](https://raw.githubusercontent.com/JeffXue/web-log-parser/master/example.png)
 
 ---
 
-## 使用方法
-1. 将需要分析的日志存放到data目录下
-2. 配置config.ini
-3. 安装依赖`pip install -r requirements.txt`
-3. bin目录下运行`python start.py`
-4. 查看结果：result/目录下的index.html（result/report/目录下将生成对应的分析结果）
+## Instructions
+1. store the logs files in the data directory `./data`
+2. modify config.ini
+3. install requirements `pip install -r requirements.txt`
+3. start the analysis in bin dir`cd ./bin && python start.py`
+4. check html result in result dir `result/index.html`
 
 ---
 
-## 配置说明
+## Configuration
 
-### format
-- log-pattern 解析日志的正则表达式
-- log-format 日志内容格式，用于本工具，每项对应log-pattern匹配项，默认支持统计以下配置项：
-    - ip：用户IP
-    - real_ip：用户真实IP，若配置了该项将忽略ip的统计，而使用real_ip进行统计
-    - datetime：请求访问时间
-    - url：请求url
-    - method：请求方法
-    - protocol：请求协议
-    - cost： 请求耗时
+### Format
+- log-pattern: regular expression for parsing logs
+- log-format: log content format, corresponding log-pattern match. The following configuration items are supported by default.：
+    - ip： request IP
+    - real_ip： user real IP. If this option is configured, ip configuration will be ignored, and real_ip will be used for statistics.
+    - datetime： request access time
+    - url： request url
+    - method： request method
+    - protocol： request protocol
+    - cost: request cost
 
-### filter
-- support_method 支持的URL Method，否则不进行统计
-- is_with_parameters 统计URL参数启用标志位，默认将转换URL中参数，如?key=123统计时转换为key={key}
-- urls_most_number 配置单独统计的URL最大数量
-- custom_parameters 配置特殊的参数键值对，以逗号分隔，配置的t={timeStramp}，在分析参数时会将t键的值替换为固定的{timeStramp}
-- fixed_parameter_keys 配置特殊的参数key值，以逗号分隔，参数中的key=123，不会被置换为key={key}
-- ignore_urls URL过滤器
-- static-file 需要过滤的静态文件后缀
+### Filter
+- support_method: supported request method, otherwise no statistics
+- is_with_parameters: enable flag for statistics url parameter，By default, the parameters in the URL will be converted, such as? Key = 123 when converting to key = {key}
+- urls_most_number: the maximum number of URLs separately counted
+- custom_parameters: configure special parameter key-value pairs, separated by commas, when configured t = {timeStamp}, the value of t key will be replaced with a fixed {timeStamp}
+- fixed_parameter_keys: configure special parameter key values, separated by commas, when configured key = 123,  will not be replaced with key = {key}
+- ignore_urls: urls will be ignore
+- static-file: file suffixes will be ignore
 
-### report
-- second_line_flag 每秒PV曲线图启用标志位
-- cost_time_flag 响应时间区间占比图及响应时间分布图启用标志位
+### Report
+- language: the language use in the report
+    - chinese
+    - english
+- second_line_flag: enable flags for PV curve graph per second
+- cost_time_flag: enable flags for response time interval proportion map and response time distribution map
 
-### goaccess
-- goaccess_flag 是否获取GoAccess分析结果，设置为1：获取，0:不获取（需要已安装GoAccess）
-- time-format 日志中的时间格式，用于GoAccess
-- date-format 日志中的日期格式，用于GoAccess
-- goaccess-log-format 日志格式，用于GoAccess
+### GoAccess
+- goaccess_flag: whether to get GoAccess analysis results, set to 1: Get, 0: Do not get (requires GoAccess installed)
+- time-format: time format, for GoAccess
+- date-format: date format, for GoAccess
+- goaccess-log-format: log format，for GoAccess
 
 
 
