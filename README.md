@@ -1,10 +1,12 @@
 ## web-log-parser
 **web-log-parser** is an open source analysis web log tool, developed in python language, with flexible log format configuration
 
+[中文说明文档](https://github.com/JeffXue/web-log-parser/blob/master/README_ch.md)
+
 ---
 
 ## Example
-![example picture](https://raw.githubusercontent.com/JeffXue/web-log-parser/master/example.png)
+![example picture](https://raw.githubusercontent.com/JeffXue/web-log-parser/master/example_en.png)
 
 ---
 

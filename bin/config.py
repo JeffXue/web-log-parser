@@ -38,6 +38,7 @@ class Config:
         self.ignore_urls = all_config.get('filter', 'ignore_urls').split(',')
         self.static_file = all_config.get('filter', 'static-file').split(',')
 
+        self.report_language = all_config.get('report', 'language')
         self.second_line_flag = int(all_config.get('report', 'second_line_flag'))
         self.cost_time_flag = int(all_config.get('report', 'cost_time_flag'))
         self.cost_time_percentile_flag = int(all_config.get('report', 'cost_time_percentile_flag'))

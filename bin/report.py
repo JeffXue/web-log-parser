@@ -7,7 +7,10 @@ from config import config
 from jinja2 import Environment, FileSystemLoader
 
 env = Environment(loader=FileSystemLoader('./templates'))
-report_template = env.get_template('report.html')
+if config.report_language == 'english':
+    report_template = env.get_template('report_en.html')
+else:
+    report_template = env.get_template('report.html')
 index_template = env.get_template('index.html')
 url_template = env.get_template('url.html')
 
@@ -69,10 +72,16 @@ def upload_report(data, hours_times, minutes_times):
 def generate_web_log_parser_report(data):
     if config.goaccess_flag:
         data.setdefault('goaccess_file', data.get('source_file') + '_GoAccess.html')
-        data.setdefault('goaccess_title', u'查看GoAccess生成报告')
+        if config.report_language == 'english':
+            data.setdefault('goaccess_title', u'Check GoAccess Report')
+        else:
+            data.setdefault('goaccess_title', u'查看GoAccess生成报告')
     else:
         data.setdefault('goaccess_file', '#')
-        data.setdefault('goaccess_title', u'GoAccess报告已设置为无效，无法查看')
+        if config.report_language == 'english':
+            data.setdefault('goaccess_title', u'GoAccess Report Is Disable!')
+        else:
+            data.setdefault('goaccess_title', u'GoAccess报告已设置为无效，无法查看')
 
     hours_times = sorted(list(data.get('hours_hits')))
     minutes_times = sorted(list(data.get('minutes_hits')))
