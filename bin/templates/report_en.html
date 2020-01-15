@@ -1,0 +1,674 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <body>
+  <div align="center">
+    <h1 align="center"><a href="https://github.com/JeffXue/web-log-parser" target="github">Web Log Parser</a></h1>
+    <table class="bordered">
+      <caption align="left">Overall Analyzed Requests</caption>
+      <tr>
+        <th><strong>Log File</strong></th>
+        <td colspan="3"><strong>{{ data['source_file'] }}</strong></td>
+        <td>
+          <a href="{{ data['goaccess_file'] }}" target="_goaccess">{{ data['goaccess_title'] }}</a>
+        </td>
+      </tr>
+      <tr>
+        <th><strong>Total PV</strong></th>
+        <th><strong>Total IP</strong></th>
+        <th><strong>Requests/Per Second（Max）</strong></th>
+        <th><strong>Peak Time</strong></th>
+        <th><strong>Requests/Per Second（Avg）</strong></th>
+      </tr>
+      <tr>
+        <td><strong>{{ data['pv'] }}</strong></td>
+        <td><strong>{{ data['uv'] }}</strong></td>
+        <td><strong>{{ data['response_peak'] }}</strong></td>
+        <td><strong>{{ data['response_peak_time'] }}</strong></td>
+        <td><strong>{{ data['response_avg'] }}</strong></td>
+      </tr>
+    </table>
+
+    <br>
+
+    {% if cost_time_percentile_flag %}
+      <br>
+      <table class="bordered">
+        <tr>
+          {% if status_codes %}
+            <td>
+              <div id="costPChart" style="height:400px; width: 400px;"></div>
+            </td>
+            <td>
+              <div id="statusChart" style="height:400px; width: 400px;"></div>
+            </td>
+            <td>
+              <div id="methodChart" style="height:400px; width: 400px;"></div>
+            </td>
+          {% else %}
+            <td>
+              <div id="costPChart" style="height:400px; width: 670px;"></div>
+            </td>
+            <td>
+              <div id="methodChart" style="height:400px; width: 670px;"></div>
+            </td>
+          {% endif %}
+        </tr>
+      </table>
+    {% endif %}
+
+    <table class="bordered">
+      <tr>
+        <td>
+          <div id="hoursChart" style="height:400px; width: 670px;"></div>
+        </td>
+        <td>
+          <div id="minutesChart" style="height:400px; width: 670px;"></div>
+        </td>
+      </tr>
+    </table>
+
+    {% if second_line_flag %}
+      <table class="bordered">
+        <tr>
+          <td>
+            <div id="secondChart" style="height:400px"></div>
+          </td>
+        </tr>
+      </table>
+    {% endif %}
+
+
+    {% if cost_time_flag %}
+      <br>
+      <table class="bordered">
+        <tr>
+          <td>
+            <div id="costChart" style="height:400px"></div>
+          </td>
+        </tr>
+      </table>
+    {% endif %}
+
+    <br>
+
+    {% if data['url_data_list'] %}
+      <table class="bordered">
+        <caption>
+          Top requests
+        </caption>
+        {% if data['url_data_list'][0].cost %}
+          <tr>
+            <th colspan="6" rowspan="2"><strong>Requests</strong></th>
+            <th rowspan="2"><strong>PV</strong></th>
+            <th rowspan="2"><strong>Proportion</strong></th>
+            <th rowspan="2"><strong>Requests/Per Second（Max）</strong></th>
+            <th rowspan="2"><strong>Method</strong></th>
+            <th colspan="4"><strong>Cost(Second)</strong></th>
+          </tr>
+          <tr>
+            <th><strong>Avg</strong></th>
+            <th><strong>90%</strong></th>
+            <th><strong>Median</strong></th>
+            <th><strong>Variance</strong></th>
+          </tr>
+        {% else %}
+          <tr>
+            <th colspan="6"><strong>Requests</strong></th>
+            <th><strong>PV</strong></th>
+            <th><strong>Proportion</strong></th>
+            <th><strong>Requests/Per Second（Max）</strong></th>
+            <th><strong>Method</strong></th>
+          </tr>
+        {% endif %}
+
+        {% for url_data in data['url_data_list'] %}
+          {% if url_data.cost %}
+            {% if url_data.cost_time['avg'] >= cost_time_threshold %}
+              <tr style="color: red">
+                {% else %}
+              <tr>
+            {% endif %}
+          <td colspan="6">
+            <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
+          </td>
+          <td><strong>{{ url_data.pv }}</strong></td>
+          <td><strong>{{ url_data.ratio }}%</strong></td>
+          <td><strong>{{ url_data.peak }}</strong></td>
+          <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+          <td><strong>{{ url_data.cost_time['avg'] }}</strong></td>
+          <td><strong>{{ url_data.cost_time['p9'] }}</strong></td>
+          <td><strong>{{ url_data.cost_time['p5'] }}</strong></td>
+          <td><strong>{{ url_data.cost_time['variance'] }}</strong></td>
+          </tr>
+          {% else %}
+            <tr>
+              <td colspan="6">
+                <strong>{{ url_data.url.split()[1]|replace("&amp;", "&")|wordwrap(width=70, break_long_words=True, wrapstring="<br/>")|safe }}</strong>
+              </td>
+              <td><strong>{{ url_data.pv }}</strong></td>
+              <td><strong>{{ url_data.ratio }}%</strong></td>
+              <td><strong>{{ url_data.peak }}</strong></td>
+              <td><strong>{{ url_data.url.split()[0].replace('"', '') }}</strong></td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+
+      </table>
+    {% endif %}
+  </div>
+
+  <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+
+  <script type="text/javascript">
+    require.config({
+      paths: {
+        echarts: 'http://echarts.baidu.com/build/dist'
+      }
+    });
+
+    require(
+        [
+          'echarts',
+          'echarts/theme/macarons',
+          'echarts/chart/bar',
+          'echarts/chart/line',
+          'echarts/chart/scatter',
+          'echarts/chart/pie'
+        ],
+        function (ec, theme) {
+          var hoursChart = ec.init(document.getElementById('hoursChart'), theme);
+
+          var hoursOption = {
+            title: {
+              text: 'PV/Per Hours',
+              subtext: ''
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            legend: {
+              data: ['PV']
+            },
+            toolbox: {
+              show: true,
+              feature: {
+                mark: {show: false},
+                dataView: {show: false, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: false},
+                saveAsImage: {show: true}
+              }
+            },
+            calculable: true,
+            xAxis: [
+              {
+                type: 'category',
+                boundaryGap: false,
+                data: [{% for hour in hours_times %}'{{ hour }}:00',{% endfor %}]
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value',
+                axisLabel: {
+                  formatter: '{value}'
+                }
+              }
+            ],
+            series: [
+              {
+                name: 'PV',
+                type: 'line',
+                data: [{% for hour in hours_times %}{{ data['hours_hits'][hour] }}, {% endfor %}],
+                markPoint: {
+                  data: [
+                    {type: 'max', name: 'MAX'},
+                    {type: 'min', name: 'MIN'}
+                  ]
+                },
+                markLine: {
+                  data: [
+                    {type: 'average', name: 'AVG'}
+                  ]
+                }
+              }
+            ]
+          };
+          hoursChart.setOption(hoursOption);
+
+          var minuteChart = ec.init(document.getElementById('minutesChart'), theme);
+
+          var minuteOption = {
+            title: {
+              text: 'PV/Per Minute',
+              subtext: ''
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            legend: {
+              data: ['PV']
+            },
+            toolbox: {
+              show: true,
+              feature: {
+                mark: {show: false},
+                dataView: {show: false, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: false},
+                saveAsImage: {show: true}
+              }
+            },
+            calculable: true,
+            xAxis: [
+              {
+                type: 'category',
+                boundaryGap: false,
+                data: [{% for minute in minutes_times %}'{{ minute }}',{% endfor %}]
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value',
+                axisLabel: {
+                  formatter: '{value}'
+                }
+              }
+            ],
+            series: [
+              {
+                name: 'PV',
+                type: 'line',
+                data: [{% for minute in minutes_times %}{{ data['minutes_hits'][minute] }}, {% endfor %}],
+                markPoint: {
+                  data: [
+                    {type: 'max', name: 'MAX'},
+                    {type: 'min', name: 'MIN'}
+                  ]
+                },
+                markLine: {
+                  data: [
+                    {type: 'average', name: 'AVG'}
+                  ]
+                }
+              }
+            ]
+          };
+          minuteChart.setOption(minuteOption);
+
+          {% if second_line_flag %}
+            var secondChart = ec.init(document.getElementById('secondChart'), theme);
+
+            var secondOption = {
+              title: {
+                text: 'PV/Per Seconds',
+                subtext: ''
+              },
+              tooltip: {
+                trigger: 'axis'
+              },
+              legend: {
+                data: ['PV']
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  mark: {show: false},
+                  dataView: {show: false, readOnly: false},
+                  magicType: {show: true, type: ['line', 'bar']},
+                  restore: {show: false},
+                  saveAsImage: {show: true}
+                }
+              },
+              calculable: true,
+              xAxis: [
+                {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: [{% for second in seconds_times %}'{{ second }}',{% endfor %}]
+                }
+              ],
+              yAxis: [
+                {
+                  type: 'value',
+                  axisLabel: {
+                    formatter: '{value}'
+                  }
+                }
+              ],
+              series: [
+                {
+                  name: 'PV',
+                  type: 'line',
+                  data: [{% for second in seconds_times %}{{ data['second_hits'][second] }}, {% endfor %}],
+                  markPoint: {
+                    data: [
+                      {type: 'max', name: 'MAX'},
+                      {type: 'min', name: 'MIN'}
+                    ]
+                  },
+                  markLine: {
+                    data: [
+                      {type: 'average', name: 'AVG'}
+                    ]
+                  }
+                }
+              ]
+            };
+            secondChart.setOption(secondOption);
+          {% endif %}
+
+
+          var methodChart = ec.init(document.getElementById('methodChart'), theme);
+
+          methodChart.setOption({
+            title: {
+              text: 'Request Method Statistics'
+            },
+            tooltip: {
+              trigger: 'item',
+              formatter: '{a} <br/>{b} : {c} ({d}%)'
+
+            },
+            legend: {
+              x: 'center',
+              y: 'bottom',
+              data: ['GET', 'POST']
+            },
+            toolbox: {
+              show: true,
+              feature: {
+                magicType: {
+                  show: true,
+                  type: ['pie', 'funnel'],
+                  option: {
+                    funnel: {
+                      x: '25%',
+                      width: '50%',
+                      funnelAlign: 'left'
+                    }
+                  }
+                },
+                restore: {
+                  show: true,
+                  title: "Restore"
+                },
+                saveAsImage: {
+                  show: true,
+                  title: "Save Image"
+                }
+              }
+            },
+            calculable: true,
+            series: [{
+              name: 'Proportion',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '48%'],
+              data: [
+                {
+                  value: {{ method_counts['get'] }},
+                  name: 'GET'
+                },
+                {
+                  value: {{ method_counts['post'] }},
+                  name: 'POST'
+                }
+              ]
+            }]
+          });
+
+          {% if status_codes %}
+
+            var statusChart = ec.init(document.getElementById('statusChart'), theme);
+
+            statusChart.setOption({
+              title: {
+                text: 'Response Status Code Statistics'
+              },
+              tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>status code={b}: {c} ({d}%)'
+
+              },
+              legend: {
+                x: 'center',
+                y: 'bottom',
+                data: [{% for key in status_codes_keys %}{% if loop.last %}{{ key }}{% else %}{{ key }}, {% endif %}{% endfor %}]
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                      funnel: {
+                        x: '25%',
+                        width: '50%',
+                        funnelAlign: 'left'
+                      }
+                    }
+                  },
+                  restore: {
+                    show: true,
+                    title: "Restore"
+                  },
+                  saveAsImage: {
+                    show: true,
+                    title: "Save Image"
+                  }
+                }
+              },
+              calculable: true,
+              series: [{
+                name: 'Proportion',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '48%'],
+                data: [
+                  {% for key in status_codes_keys %}
+                    {% if loop.last %}
+                      {
+                        value: {{ status_codes[key] }},
+                        name: {{ key }}
+                      }
+                    {% else %}
+                      {
+                        value: {{ status_codes[key] }},
+                        name: {{ key }}
+                      },
+                    {% endif %}
+                  {% endfor %}
+                ]
+              }]
+            });
+          {% endif %}
+
+
+          {% if cost_time_percentile_flag %}
+            var costPChart = ec.init(document.getElementById('costPChart'), theme);
+
+            costPChart.setOption({
+              title: {
+                text: 'Response Time Statistics'
+              },
+              tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+              },
+              legend: {
+                x: 'center',
+                y: 'bottom',
+                data: ['<50ms', '50~100ms', '100~150ms', '150~200ms', '200~250ms', '250~300ms', '300~350ms', '350~400ms', '400~450ms', '450~500ms', '>500ms']
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                      funnel: {
+                        x: '25%',
+                        width: '50%',
+                        funnelAlign: 'left'
+                      }
+                    }
+                  },
+                  restore: {
+                    show: true,
+                    title: "Restore"
+                  },
+                  saveAsImage: {
+                    show: true,
+                    title: "Save Image"
+                  }
+                }
+              },
+              calculable: true,
+              series: [{
+                name: 'Proportion',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '48%'],
+                data: [
+                  {
+                    value: {{ cost_time_range['r1'] }},
+                    name: '<50ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r2'] }},
+                    name: '50~100ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r3'] }},
+                    name: '100~150ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r4'] }},
+                    name: '150~200ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r5'] }},
+                    name: '200~250ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r6'] }},
+                    name: '250~300ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r7'] }},
+                    name: '300~350ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r8'] }},
+                    name: '350~400ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r9'] }},
+                    name: '400~450ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r10'] }},
+                    name: '450~500ms'
+                  },
+                  {
+                    value: {{ cost_time_range['r11'] }},
+                    name: '>500ms'
+                  }
+                ]
+              }]
+            });
+          {% endif %}
+
+          {% if cost_time_flag %}
+            var costChart = ec.init(document.getElementById('costChart'), theme);
+            var costOption = {
+              title: {
+                text: 'Response Time Distribution',
+                subtext: ''
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  show: true,
+                  type: 'cross',
+                  lineStyle: {
+                    type: 'dashed',
+                    width: 1
+                  }
+                }
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  mark: {show: false},
+                  dataView: {show: false, readOnly: false},
+                  restore: {show: false},
+                  saveAsImage: {show: true}
+                }
+              },
+              dataZoom: {
+                show: true
+              },
+              legend: {
+                data: ['Response Time']
+              },
+              xAxis: [
+                {
+                  type: 'time'
+                }
+              ],
+              yAxis: [
+                {
+                  type: 'value',
+                  axisLabel: {
+                    formatter: '{value} ms'
+                  }
+                }
+              ],
+              animation: false,
+              series: [
+                {
+                  name: 'Response Time',
+                  type: 'scatter',
+                  tooltip: {
+                    trigger: 'axis',
+                    formatter: function (params) {
+                      var date = new Date(params.value[0]);
+                      return params.seriesName
+                          + ' （'
+                          + date.getFullYear() + '-'
+                          + (date.getMonth() + 1) + '-'
+                          + date.getDate() + ' '
+                          + date.getHours() + ':'
+                          + date.getMinutes() + ':'
+                          + date.getSeconds()
+                          + '）<br/>'
+                          + params.value[1] + ' ms';
+                    },
+                    axisPointer: {
+                      type: 'cross',
+                      lineStyle: {
+                        type: 'dashed',
+                        width: 1
+                      }
+                    }
+                  },
+                  data: [{% for cost_time in cost_time_list %}[
+                    new Date('{{ cost_time['time'] }}'), {{ cost_time['cost_time'] }}],{% endfor %}],
+                }
+              ]
+            };
+            costChart.setOption(costOption);
+          {% endif %}
+
+        }
+    );
+  </script>
+
+
+  </body>
+{% endblock %}
