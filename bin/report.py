@@ -63,7 +63,7 @@ def upload_report(data, hours_times, minutes_times):
             'status_codes': data['status_codes']}
     headers = {'Content-Type': 'application/json'}
     r = requests.post(config.upload_url, data=json.dumps(data), headers=headers)
-    print r.text
+    print(r.text)
 
 
 def generate_web_log_parser_report(data):
@@ -99,7 +99,7 @@ def generate_web_log_parser_report(data):
 
     html_file = '../result/report/' + data.get('source_file') + '.html'
     with open(html_file, 'w') as f:
-        f.write(html.encode('utf-8'))
+        f.write(str(html.encode('utf-8')))
 
 
 def generate_web_log_parser_urls(data):
@@ -108,11 +108,11 @@ def generate_web_log_parser_urls(data):
 
     html_file = '../result/urls/' + data.get('source_file') + '_urls.html'
     with open(html_file, 'w') as f:
-        f.write(html.encode('utf-8'))
+        f.write(str(html.encode('utf-8')))
 
 
 def update_index_html():
     html = index_template.render(files=sorted(get_dir_files('../result/report/')))
 
     with open('../result/index.html', 'w') as f:
-        f.write(html.encode('utf-8'))
+        f.write(str(html.encode('utf-8')))

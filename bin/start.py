@@ -375,16 +375,16 @@ def main():
 
     for target_file in target_files:
         try:
-            print datetime.datetime.now(), ' Start parse file : ' + target_file
+            print(datetime.datetime.now(), ' Start parse file : ' + target_file)
 
             parse_log_file(target_file, log_format)
             if config.goaccess_flag:
                 parse_log_file_with_goaccess(target_file)
 
-            print datetime.datetime.now(), ' End parse file: ' + target_file
+            print(datetime.datetime.now(), ' End parse file: ' + target_file)
         except Exception:
             exstr = traceback.format_exc()
-            print exstr
+            print(exstr)
     update_index_html()
 
 
