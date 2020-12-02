@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import codecs
 import configparser
 
 
@@ -7,7 +8,7 @@ class Config:
 
     def __init__(self, config_file):
         all_config = configparser.RawConfigParser()
-        with open(config_file, 'r') as cfg_file:
+        with codecs.open(config_file, 'r', 'utf-8') as cfg_file:
             all_config.readfp(cfg_file)
 
         self.log_format = all_config.get('format', 'log-format')

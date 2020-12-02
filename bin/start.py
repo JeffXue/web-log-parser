@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import codecs
 import os
 import re
 import json
@@ -180,7 +181,7 @@ def parse_log_file(target_file, log_format):
     pattern = re.compile(config.log_pattern)
 
     # 第一次读取整个文件，获取对应的请求时间、请求URL、请求方法、用户IP、请求响应时间等数据
-    with open('../data/' + target_file, 'r') as f:
+    with codecs.open('../data/' + target_file, 'r', 'utf-8') as f:
         for line in f:
             match = pattern.match(line)
             if match is None:
@@ -262,7 +263,7 @@ def parse_log_file(target_file, log_format):
             continue
 
     # 第二次读取文件，以获取特定请求的访问时间及响应时间
-    with open('../data/' + target_file, 'r') as f:
+    with codecs.open('../data/' + target_file, 'r', 'utf-8') as f:
         for line in f:
             match = pattern.match(line)
             if match is None:
